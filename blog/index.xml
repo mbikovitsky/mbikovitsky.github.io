@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blog on Biko&#39;s House of Horrors</title>
+    <link>https://bikodbg.com/blog/</link>
+    <description>Recent content in Blog on Biko&#39;s House of Horrors</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© 2020 — Michael Bikovitsky — CC BY-SA 4.0.</copyright>
+    <lastBuildDate>Sat, 02 May 2020 19:36:27 +0300</lastBuildDate>
+    
+	<atom:link href="https://bikodbg.com/blog/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Crash to Zork</title>
+      <link>https://bikodbg.com/blog/2020/05/crash-to-zork/</link>
+      <pubDate>Sat, 02 May 2020 19:36:27 +0300</pubDate>
+      
+      <guid>https://bikodbg.com/blog/2020/05/crash-to-zork/</guid>
+      <description>Some years ago, when I was just getting into Windows kernel development, I stumbled upon an unusual function: DbgPrompt. Somewhere, some driver developer needed the ability to read input from the currently attached kernel debugger, and so this function was added to the kernel&amp;rsquo;s public API. For me, it sparked an idea: if a driver can read text from- and write text to-, the attached debugger, why not use it to play a little game?</description>
+    </item>
+    
+  </channel>
+</rss>
