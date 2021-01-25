@@ -187,7 +187,7 @@ context is set to <code>-41</code>.</li>
 <p>Lucky for us, there is already a payload generator provided with the challenge.</p>
 <h2 id="no-payload-survives-contact-with-the-target-machine">No payload survives contact with the target machine</h2>
 <p>We run the payload and get&hellip; garbage. Shouldn&rsquo;t this have worked?</p>
-<p><img src="/baby-risc-gibberish.png" alt="First output from running the payload"></p>
+<p><img src="/img/baby-risc-gibberish.png" alt="First output from running the payload"></p>
 <p>The problem is that this RISC architecture does not have a way to load an immediate
 value into a register. Instead, we have to resort to things like <code>ADDI R0, ZERO, 42</code>.
 This is precisely what the admin code generator is doing - emitting a bunch of
