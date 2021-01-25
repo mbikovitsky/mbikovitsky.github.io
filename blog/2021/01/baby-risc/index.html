@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Shabak Challenge 2021: BabyRISC | Biko&#39;s House of Horrors</title>
+
+    <style>body{margin:40px auto;max-width:650px;line-height:1.6;font-size:18px;color:#444;padding:0 10px}h1,h2,h3{line-height:1.2}div.header h1{padding-top:0;padding-bottom:8px;margin-bottom:24px;font-size:18px;font-weight:400;border-bottom:1px solid}.header-menu{float:right}ul.pagination{list-style-type:none;text-align:center;padding:0}ul.pagination>li{padding:0 8px;display:inline-block}div.footer{border-top:1px solid;text-align:center}img{max-width:100%;max-height:100%;display:block;margin-left:auto;margin-right:auto}</style>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Tinos&family=Ubuntu+Mono&display=swap" rel="stylesheet">
+
+<style>
+body { font-family: 'Tinos', serif; }
+pre { font-family: 'Ubuntu Mono', monospace; }
+code { font-family: 'Ubuntu Mono', monospace; }
+</style>
+
+</head>
+
+
+<body>
+<div class="header">
+    <h1>
+        <a href="/">Biko&#39;s House of Horrors</a>
+        <div class="header-menu">
+            <a href="/blog/">blog</a>
+            <a href="/writing/">writing</a>
+            <a href="/about/">about</a>
+        </div>
+    </h1>
+</div>
+<div id="content">
+
+<header>
+    <h1>Shabak Challenge 2021: BabyRISC</h1>
+    
+
+<div class="post-meta">
+    Date &#x5b;
+    <time datetime="2021-01-25">Jan 25, 2021</time>
+    &#x5d;
+</div>
+</header>
+<article>
+    <p>This is part of my series of writeups on the Shabak 2021 CTF challenges.
+See the complete collection <a href="https://bikodbg.com/blog/2021/01/unseen-shield/" title="Shabak Challenge 2021 table of contents">here</a>.</p>
+<h2 id="introduction">Introduction</h2>
+<p>The <a href="https://github.com/mbikovitsky/shabak-challenge-2021/tree/main/Pwn/1%20-%20BabyRISC" title="BabyRISC challenge files">challenge</a> description reads:</p>
+<blockquote>
+<p>Following ARM&rsquo;s success, I went ahead and designed my own RISC assembly language.</p>
+<p>I wrote a simulator, so you&rsquo;ll be able to run your own programs and enjoy
+the (very) reduced instruction set!</p>
+<p>Of course, with such minimal implementation, reading the flag is impossible.</p>
+</blockquote>
+<p>Since this is an pwn challenge, we&rsquo;re probably going to have to write some code
+in this fictional RISC assembly in order to read the flag.</p>
+<p>So, let&rsquo;s take a look.</p>
+<h2 id="the-c-in-risc">The C in RISC</h2>
+<p>A cursory examination of the source code reveals that the complete set of instructions
+is listed in the <code>asm_instructions.h</code> file, and the implementation is inside the
+corresponding <code>.c</code> file. And just to make our life a little more interesting,
+the implementation is riddled with macros :)</p>
+<p>We have the usual arithmetic operations (addition, multiplication, bit twiddling, etc.),
+as well as some more interesting things:</p>
+<ul>
+<li>Output operations:
+<ul>
+<li><code>PRINTC</code> to print the lower byte of a register as a character.</li>
+<li><code>PRINTDD</code> and <code>PRINTDX</code> to print the value of a register in decimal or hexadecimal
+formats, respectively.</li>
+<li><code>PRINTNL</code> to print a newline.</li>
+</ul>
+</li>
+<li>Stack operations:
+<ul>
+<li><code>PUSH</code> and <code>POP</code>.</li>
+<li><code>PUSHCTX</code> and <code>POPCTX</code>.</li>
+</ul>
+</li>
+<li>Flow-control operations:
+<ul>
+<li><code>RET</code>, to terminate execution unconditionally.</li>
+<li><code>RETNZ</code>, to terminate execution if the given register <em>is not</em> zero.</li>
+<li><code>RETZ</code>, to terminate execution if the given register <em>is</em> zero.</li>
+</ul>
+</li>
+</ul>
+<p>Speaking of registers, our fictional architecture has 9 of them, as defined in
+<code>asm_processor_state.{c,h}</code>:</p>
+<ul>
+<li><code>ZERO</code></li>
+<li><code>R0</code>-<code>R6</code></li>
+<li><code>SP</code></li>
+</ul>
+<p>Almost every arithmetic operation <code>OP</code> has two forms:</p>
+<ul>
+<li>The &ldquo;regular&rdquo; form, <code>&lt;OP&gt; &lt;R&gt;, &lt;R&gt;, &lt;R&gt;</code>, i.e. an opcode followed by
+3 register specifications.</li>
+<li>The &ldquo;immediate&rdquo; form, <code>&lt;OPI&gt; &lt;R&gt;, &lt;R&gt;, &lt;IMM32&gt;</code>, i.e. an opcode followed by
+2 register specifications, followed by an immediate value (32-bit).</li>
+</ul>
+<p>For instance, <code>ADD R0, R1, R1</code> will calculate <code>R1 + R1</code> and store the result in <code>R0</code>.
+Similarly, <code>ADDI R0, R1, 42</code> will calculate <code>R1 + 42</code> and store the result in <code>R0</code>.</p>
+<p>Looking through the code, explicit writes to the <code>ZERO</code> register are forbidden
+(enforced by the function <code>write_reg</code> in <code>asm_processor_state.c</code>). For instance,
+we can&rsquo;t do <code>ADD ZERO, R0, R0</code>. That is, the <code>ZERO</code> register always contains the value
+<code>0</code>.</p>
+<p>Finally, the <code>SP</code> register is, unsurprisingly, the stack pointer. The processor has
+a 4kB stack, and the instructions mentioned above are used to manipulate it.</p>
+<h2 id="the-plan">The Plan</h2>
+<p>Now that we understand the architecture, what do we actually have to do in order to
+get the flag?</p>
+<p>The flag itself is stored in a file called <code>flag</code> in the current directory. However,
+the instructions provided by the simulator do not provide for reading files. Indeed,
+they do not seem to be fit for any nefarious purpose! The print instructions do not use
+any unsafe format strings, and all stack accesses are validated so as not to overflow.
+Here goes out hope for RCE.</p>
+<p>But do we actually have to execute arbitrary code? Perhaps it&rsquo;s time we took a look
+at what the simulator actually does.</p>
+<p>Looking in <code>main.c</code>, we notice that the simulator first generates some sort of
+&ldquo;admin code&rdquo;, then reads the user-supplied assembly from <code>stdin</code>, then executes
+them: first the user code, then the admin code.</p>
+<p>What&rsquo;s this admin code? First, it checks whether <code>R0 * 42 == 1</code>. If not, it terminates
+execution. Otherwise, it prints the flag value.</p>
+<p>Great, we&rsquo;ve simplified the problem from gaining RCE to breaking the rules of math.
+This should be a walk in the park!</p>
+<p>The key here is to note <em>how</em> the admin code checks the condition. Essentially,
+the code boils down to this:</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">ADDI R1, ZERO, 42
+MUL R2, R0, R1
+SUBI R2, R2, 1
+RETNZ R2
+// Print flag
+</code></pre></td></tr></table>
+</div>
+</div><p>Which is equivalent to:</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">R1 = ZERO + 42
+R2 = R0 * R1
+R2 = R2 - 1
+RETNZ R2
+// Print flag
+</code></pre></td></tr></table>
+</div>
+</div><p>Do you see the problem here? There isn&rsquo;t any, right? Granted, it would&rsquo;ve been more
+efficient to replace the first two instructions with a single <code>MULI</code>, but otherwise
+the code is sound, right?</p>
+<p>Well&hellip; The code is sound only if the <code>ZERO</code> register is actually <code>0</code>. If, say,
+this register were to become <code>-41</code>, and <code>R0</code> were to become <code>1</code>, then the check
+would pass and we&rsquo;d get the flag!</p>
+<p>Let&rsquo;s see if we can&rsquo;t make it so that <code>ZERO == -41</code>.</p>
+<h2 id="you-pop-what-you-push">You pop what you push</h2>
+<p>We already know that direct assignments to the <code>ZERO</code> register are forbidden.
+What about indirect assignments?</p>
+<p>Remember those <code>PUSHCTX</code> and <code>POPCTX</code> instructions? They push and pop all registers
+to and from the stack, respectively. But surely, you would say, <code>PUSHCTX</code> wouldn&rsquo;t push
+the <code>ZERO</code> register, right? What&rsquo;s the point, since it&rsquo;s always <code>0</code>? And therefore,
+<code>POPCTX</code> wouldn&rsquo;t pop it off the stack, right?</p>
+<p>Except they do.</p>
+<h2 id="how-babies-are-made">How babies are made</h2>
+<p>Now it&rsquo;s only a matter of generating the payload, which will do the following:</p>
+<ol>
+<li>Set <code>R0</code> to <code>1</code>.</li>
+<li>Push a fake register context onto the stack, such that the <code>ZERO</code> register in the
+context is set to <code>-41</code>.</li>
+<li>Pop the context off the stack.</li>
+</ol>
+<p>Lucky for us, there is already a payload generator provided with the challenge.</p>
+<h2 id="no-payload-survives-contact-with-the-target-machine">No payload survives contact with the target machine</h2>
+<p>We run the payload and get&hellip; garbage. Shouldn&rsquo;t this have worked?</p>
+<p><img src="/baby-risc-gibberish.png" alt="First output from running the payload"></p>
+<p>The problem is that this RISC architecture does not have a way to load an immediate
+value into a register. Instead, we have to resort to things like <code>ADDI R0, ZERO, 42</code>.
+This is precisely what the admin code generator is doing - emitting a bunch of
+<code>ADDI</code> instructions to load the flag into a register, 4 bytes at a time.</p>
+<p>Under normal circumstances this would&rsquo;ve worked fine, except we just changed the value
+of <code>ZERO</code>. Fortunately, this is reversible. We just have to collect all the bytes
+printed by the simulator, add <code>41</code> to each <code>DWORD</code> (since the original code
+added <code>-41</code>), then stick everything back together.</p>
+<p><code>FIN</code></p>
+
+</article>
+
+
+    </div>
+<div class="footer">
+    
+    
+    <div class="footer-links">
+        <a href="https://github.com/mbikovitsky">GitHub</a>
+        <a href="https://twitter.com/bikodbg">Twitter</a>
+    </div>
+    
+
+    
+    
+    <div class="copyright">© 2021 — Michael Bikovitsky — CC BY-SA 4.0.</div>
+    
+</div>
+</body>
+
+</html>
