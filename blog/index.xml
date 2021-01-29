@@ -7,7 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2021 — Michael Bikovitsky — CC BY-SA 4.0.</copyright>
-    <lastBuildDate>Wed, 27 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://bikodbg.com/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 29 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://bikodbg.com/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Shabak Challenge 2021: Recall</title>
+      <link>https://bikodbg.com/blog/2021/01/recall/</link>
+      <pubDate>Fri, 29 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://bikodbg.com/blog/2021/01/recall/</guid>
+      <description>This is part of my series of writeups on the Shabak 2021 CTF challenges. See the complete collection here.
+Introduction The challenge description reads:
+ Feel free to run your binary and use our tracer-call® services!
+We made sure you won&amp;rsquo;t be able to read the flag anyway ;)
+ Well, that&amp;rsquo;s not very much to go on, is it? At least we don&amp;rsquo;t have a lot of code files to look at, so that&amp;rsquo;s something.</description>
+    </item>
+    
     <item>
       <title>Shabak Challenge 2021: NFC</title>
       <link>https://bikodbg.com/blog/2021/01/nfc/</link>
