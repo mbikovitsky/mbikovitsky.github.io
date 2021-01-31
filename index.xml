@@ -14,7 +14,8 @@
       <pubDate>Fri, 29 Jan 2021 00:00:00 +0000</pubDate>
       
       <guid>https://bikodbg.com/blog/2021/01/recall/</guid>
-      <description>This is part of my series of writeups on the Shabak 2021 CTF challenges. See the complete collection here.
+      <description>Update 2021-01-31: Archive moved to the Internet Archive.
+This is part of my series of writeups on the Shabak 2021 CTF challenges. See the complete collection here.
 Introduction The challenge description reads:
  Feel free to run your binary and use our tracer-call® services!
 We made sure you won&amp;rsquo;t be able to read the flag anyway ;)
@@ -27,7 +28,8 @@ We made sure you won&amp;rsquo;t be able to read the flag anyway ;)
       <pubDate>Wed, 27 Jan 2021 00:00:00 +0000</pubDate>
       
       <guid>https://bikodbg.com/blog/2021/01/nfc/</guid>
-      <description>This is part of my series of writeups on the Shabak 2021 CTF challenges. See the complete collection here.
+      <description>Update 2021-01-31: Archive moved to the Internet Archive.
+This is part of my series of writeups on the Shabak 2021 CTF challenges. See the complete collection here.
 Introduction The challenge description reads:
  Our target adopted a new way to keep sensitive information! They use secure NFC tags to keep secure and confidential information inside them.
 We managed to place a strong NFC reader near our target&amp;rsquo;s secret NFC tag. Now we want to communicate with the that tag and extract the secret information from it.</description>
@@ -39,12 +41,12 @@ We managed to place a strong NFC reader near our target&amp;rsquo;s secret NFC t
       <pubDate>Mon, 25 Jan 2021 12:54:00 +0200</pubDate>
       
       <guid>https://bikodbg.com/blog/2021/01/baby-risc/</guid>
-      <description>This is part of my series of writeups on the Shabak 2021 CTF challenges. See the complete collection here.
+      <description>Update 2021-01-31: Archive moved to the Internet Archive.
+This is part of my series of writeups on the Shabak 2021 CTF challenges. See the complete collection here.
 Introduction The challenge description reads:
  Following ARM&amp;rsquo;s success, I went ahead and designed my own RISC assembly language.
 I wrote a simulator, so you&amp;rsquo;ll be able to run your own programs and enjoy the (very) reduced instruction set!
-Of course, with such minimal implementation, reading the flag is impossible.
- Since this is an pwn challenge, we&amp;rsquo;re probably going to have to write some code in this fictional RISC assembly in order to read the flag.</description>
+Of course, with such minimal implementation, reading the flag is impossible.</description>
     </item>
     
     <item>
@@ -53,9 +55,9 @@ Of course, with such minimal implementation, reading the flag is impossible.
       <pubDate>Mon, 25 Jan 2021 12:53:00 +0200</pubDate>
       
       <guid>https://bikodbg.com/blog/2021/01/unseen-shield/</guid>
-      <description>In January of 2021, the Shabak (the Israel Security Agency) published a set of CTF challenges at shabakchallenge.com. The original website may be gone now, but I downloaded what I could and uploaded it to GitHub.
-For your amusement, I also present writeups on some of the challenges I solved. They will be linked here as soon as they are published.
- Pwn  BabyRISC Recall Paging Python4   Reversing  ForceCoin NFC    </description>
+      <description>Update 2021-01-31: Archive moved to the Internet Archive.
+In January of 2021, the Shabak (the Israel Security Agency) published a set of CTF challenges at shabakchallenge.com. The original website may be gone now, but I downloaded what I could and uploaded it to the Internet Archive.
+For your amusement, I also present writeups on some of the challenges I solved. They will be linked here as soon as they are published.</description>
     </item>
     
     <item>
