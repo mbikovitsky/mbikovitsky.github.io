@@ -7,7 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2021 — Michael Bikovitsky — CC BY-SA 4.0.</copyright>
-    <lastBuildDate>Fri, 29 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://bikodbg.com/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 31 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://bikodbg.com/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Shabak Challenge 2021: ForceCoin</title>
+      <link>https://bikodbg.com/blog/2021/01/force-coin/</link>
+      <pubDate>Sun, 31 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://bikodbg.com/blog/2021/01/force-coin/</guid>
+      <description>This is part of my series of writeups on the Shabak 2021 CTF challenges. See the complete collection here.
+Introduction The challenge description reads:
+ Our agent from the field has obtained a few files related to a program that is used by a terrorist organization!
+This zip contains the program and a db file.
+We need your help parsing the db!
+Give it your best, we heard that they use it and that it might contain some intresting information for you!</description>
+    </item>
+    
     <item>
       <title>Shabak Challenge 2021: Recall</title>
       <link>https://bikodbg.com/blog/2021/01/recall/</link>
