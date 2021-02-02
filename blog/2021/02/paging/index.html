@@ -105,7 +105,7 @@ the physical addresses of Page Tables, which in turn point to actual pages with 
 Pages are 4kB in size.</p>
 <p>Looking at the <code>v_to_p</code> function, and the functions it calls, we can construct a picture
 of how a virtual address is broken down<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">+----------+----------+------------+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">+----------+----------+------------+
 |          |          |            |
 |   PDE    |   PTE    |   Offset   |
 |          |          |            |
@@ -115,7 +115,7 @@ of how a virtual address is broken down<sup id="fnref:2"><a href="#fn:2" class="
 are an index into the Page Table, and the final 12 bits are an offset into the page.</p>
 <p>What do the entries in a Page Directory/Table look like? The structure is defined
 in <code>entry.py</code><sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">+---------------------+--------+--+-----+--------+-----+-------+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">+---------------------+--------+--+-----+--------+-----+-------+
 |                     |        |  |     |        |     |       |
 |         PFN         |Reserved|NX|Dirty|Accessed|Write|Present|
 |                     |        |  |     |        |     |       |
@@ -322,7 +322,7 @@ with <code>Hypercall.GROUP_PERM_USER</code>!</p>
 <p>Conveniently for us, the paging structures are little-endian. If we treat
 the first physical page as a page table, then the first entry in it will look like
 this:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">+---------------------+----------------------------------------+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">+---------------------+----------------------------------------+
 |                     |                                        |
 |time_activated[0...2]|                groups                  |
 |                     |                                        |

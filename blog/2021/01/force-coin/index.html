@@ -191,7 +191,7 @@ to:</p>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">0
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">0
 4
 Bob -&gt; Eve [c1d9f50f86825a1a2302ec2449c17196, c1a5298f939e87e8f962a5edfc206918]
 Eve -&gt; Bob [c1d9f50f86825a1a2302ec2449c17196, a64cf5823262686e1a28b2245be34ce0, 6b6e667a40e816c4da7bb4ab64cbb82b, 1824e8e0307cbfdd1993511ab040075c, 8b1a9953c4611296a827abf8c47804d7]
@@ -224,7 +224,7 @@ written in C++, which promises many &ldquo;fun&rdquo; hours of reversing. Is the
 <pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">Alice -&gt; Bob [0cc175b9c0f1b6a831c399e269772661]
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">Alice -&gt; Bob [0cc175b9c0f1b6a831c399e269772661]
 </code></pre></td></tr></table>
 </div>
 </div><p>And a quick check reveals that the hex string is the MD5 hash of <code>&quot;a&quot;</code>. What about
@@ -234,7 +234,7 @@ written in C++, which promises many &ldquo;fun&rdquo; hours of reversing. Is the
 <pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">Alice -&gt; Bob [0cc175b9c0f1b6a831c399e269772661, 4124bc0a9335c27f086f24ba207a4912]
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">Alice -&gt; Bob [0cc175b9c0f1b6a831c399e269772661, 4124bc0a9335c27f086f24ba207a4912]
 </code></pre></td></tr></table>
 </div>
 </div><p>The first string remains unchanged, but the second one is clearly <em>not</em> the MD5
@@ -248,7 +248,7 @@ in the database is a hash of $s[0 \dots i]$.</p>
 <pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">Alice -&gt; Bob [0cc175b9c0f1b6a831c399e269772661, 187ef4436122d1cc2f40dc2b92f0eba0, 900150983cd24fb0d6963f7d28e17f72]
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">Alice -&gt; Bob [0cc175b9c0f1b6a831c399e269772661, 187ef4436122d1cc2f40dc2b92f0eba0, 900150983cd24fb0d6963f7d28e17f72]
 </code></pre></td></tr></table>
 </div>
 </div><p>And, indeed:</p>
@@ -259,7 +259,7 @@ in the database is a hash of $s[0 \dots i]$.</p>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">MD5(&#34;a&#34;)   == 0cc175b9c0f1b6a831c399e269772661
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">MD5(&#34;a&#34;)   == 0cc175b9c0f1b6a831c399e269772661
 MD5(&#34;ab&#34;)  == 187ef4436122d1cc2f40dc2b92f0eba0
 MD5(&#34;abc&#34;) == 900150983cd24fb0d6963f7d28e17f72
 </code></pre></td></tr></table>
