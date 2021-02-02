@@ -105,7 +105,7 @@ the physical addresses of Page Tables, which in turn point to actual pages with 
 Pages are 4kB in size.</p>
 <p>Looking at the <code>v_to_p</code> function, and the functions it calls, we can construct a picture
 of how a virtual address is broken down<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">+----------+----------+------------+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">+----------+----------+------------+
 |          |          |            |
 |   PDE    |   PTE    |   Offset   |
 |          |          |            |
@@ -115,7 +115,7 @@ of how a virtual address is broken down<sup id="fnref:2"><a href="#fn:2" class="
 are an index into the Page Table, and the final 12 bits are an offset into the page.</p>
 <p>What do the entries in a Page Directory/Table look like? The structure is defined
 in <code>entry.py</code><sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">+---------------------+--------+--+-----+--------+-----+-------+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">+---------------------+--------+--+-----+--------+-----+-------+
 |                     |        |  |     |        |     |       |
 |         PFN         |Reserved|NX|Dirty|Accessed|Write|Present|
 |                     |        |  |     |        |     |       |
@@ -153,9 +153,9 @@ memory (see <code>run_hypercall</code> in <code>paging.py</code>).
 <p>Regarding the hypercall configuration, it has the following format
 (see <code>_settings_fmt</code> in the <code>Hypercall</code> class in <code>hypercall.py</code>):</p>
 <p><a name="hypercall-config"></a></p>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
@@ -167,14 +167,14 @@ memory (see <code>run_hypercall</code> in <code>paging.py</code>).
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#00f">struct</span> <span style="color:#2b91af">hypercall_config</span>
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">hypercall_config</span>
 {
-    <span style="color:#2b91af">uint8_t</span>     groups;
-    <span style="color:#2b91af">char</span>        time_activated[19];
+    <span style="color:#66d9ef">uint8_t</span>     groups;
+    <span style="color:#66d9ef">char</span>        time_activated[<span style="color:#ae81ff">19</span>];
 
-    <span style="color:#00f">struct</span>
+    <span style="color:#66d9ef">struct</span>
     {
-        <span style="color:#2b91af">uint8_t</span> group_perm;
+        <span style="color:#66d9ef">uint8_t</span> group_perm;
     } group_profiles[groups];
 };
 </code></pre></td></tr></table>
@@ -187,9 +187,9 @@ for reading files or executing arbitrary commands.</p>
 <p>Or does it?</p>
 <p>A closer inspection of <code>Hypercall.save_state</code>, the function that saves the hypercall
 configuration to disk, reveals that it does so in a very peculiar way:</p>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
@@ -213,47 +213,47 @@ configuration to disk, reveals that it does so in a very peculiar way:</p>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3"><span style="color:#008000"># consts.py</span>
-ECHO = <span style="color:#a31515">&#39;echo&#39;</span>
-INTO_FILE = <span style="color:#a31515">&#39;&gt;&#39;</span>
-STATES_FOLDER = <span style="color:#a31515">&#34;user_states&#34;</span>
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3"><span style="color:#75715e"># consts.py</span>
+ECHO <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;echo&#39;</span>
+INTO_FILE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&gt;&#39;</span>
+STATES_FOLDER <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;user_states&#34;</span>
 
-<span style="color:#008000"># hypercall.py</span>
-<span style="color:#00f">class</span> <span style="color:#2b91af">Hypercall</span>:
-    <span style="color:#00f">def</span> __init__(self):
-        <span style="color:#008000"># ...</span>
-        self._open_process = os.system
-        <span style="color:#008000"># ...</span>
+<span style="color:#75715e"># hypercall.py</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Hypercall</span>:
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self):
+        <span style="color:#75715e"># ...</span>
+        self<span style="color:#f92672">.</span>_open_process <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>system
+        <span style="color:#75715e"># ...</span>
 
-    <span style="color:#00f">def</span> save_state(self, hypercall_settings, file_name):
-        <span style="color:#00f">assert</span> <span style="color:#a31515">&#34;..&#34;</span> <span style="color:#00f">not</span> <span style="color:#00f">in</span> file_name <span style="color:#00f">and</span> <span style="color:#a31515">&#34;/&#34;</span> <span style="color:#00f">not</span> <span style="color:#00f">in</span> file_name <span style="color:#00f">and</span> <span style="color:#a31515">&#34;</span><span style="color:#a31515">\\</span><span style="color:#a31515">&#34;</span> <span style="color:#00f">not</span> <span style="color:#00f">in</span> file_name
-        self._open_process(
-            ECHO +
-            f<span style="color:#a31515">&#39; &#34;</span><span style="color:#a31515">{hypercall_settings}</span><span style="color:#a31515">&#34;&#39;</span> +
-            INTO_FILE +
-            <span style="color:#a31515">&#39; &#39;</span> +
-            STATES_FOLDER +
-            os.path.sep +
-            f<span style="color:#a31515">&#39;</span><span style="color:#a31515">{file_name}</span><span style="color:#a31515">&#39;</span>)
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">save_state</span>(self, hypercall_settings, file_name):
+        <span style="color:#66d9ef">assert</span> <span style="color:#e6db74">&#34;..&#34;</span> <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> file_name <span style="color:#f92672">and</span> <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> file_name <span style="color:#f92672">and</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> file_name
+        self<span style="color:#f92672">.</span>_open_process(
+            ECHO <span style="color:#f92672">+</span>
+            f<span style="color:#e6db74">&#39; &#34;</span><span style="color:#e6db74">{hypercall_settings}</span><span style="color:#e6db74">&#34;&#39;</span> <span style="color:#f92672">+</span>
+            INTO_FILE <span style="color:#f92672">+</span>
+            <span style="color:#e6db74">&#39; &#39;</span> <span style="color:#f92672">+</span>
+            STATES_FOLDER <span style="color:#f92672">+</span>
+            os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>sep <span style="color:#f92672">+</span>
+            f<span style="color:#e6db74">&#39;</span><span style="color:#e6db74">{file_name}</span><span style="color:#e6db74">&#39;</span>)
 </code></pre></td></tr></table>
 </div>
 </div><p>In essence, this function invokes:</p>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">echo <span style="color:#a31515">&#34;&lt;hypercall_settings&gt;&#34;</span> &gt; user_states/&lt;file_name&gt;
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">echo <span style="color:#e6db74">&#34;&lt;hypercall_settings&gt;&#34;</span> &gt; user_states/&lt;file_name&gt;
 </code></pre></td></tr></table>
 </div>
 </div><p>Can we use this to our advantage? Well, if we could control the filename we could set
 it to, for instance <code>a;cat flag</code>, which would result in the following command:</p>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">echo <span style="color:#a31515">&#34;&lt;hypercall_settings&gt;&#34;</span> &gt; user_states/a;cat flag
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">echo <span style="color:#e6db74">&#34;&lt;hypercall_settings&gt;&#34;</span> &gt; user_states/a;cat flag
 </code></pre></td></tr></table>
 </div>
 </div><p>This will save the configuration to a file called <code>user_states/a</code>, and then run
@@ -322,7 +322,7 @@ with <code>Hypercall.GROUP_PERM_USER</code>!</p>
 <p>Conveniently for us, the paging structures are little-endian. If we treat
 the first physical page as a page table, then the first entry in it will look like
 this:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">+---------------------+----------------------------------------+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">+---------------------+----------------------------------------+
 |                     |                                        |
 |time_activated[0...2]|                groups                  |
 |                     |                                        |

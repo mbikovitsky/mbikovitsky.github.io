@@ -130,9 +130,9 @@ look like anything interesting.</p>
 array of <code>uint64_t</code>s. The bounds checking looks solid, so there doesn&rsquo;t seem to be any
 potential for memory corruption.</p>
 <p>So, we&rsquo;re left with the checksum &ldquo;tracer-call&rdquo;. Here&rsquo;s its code:</p>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  1
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  4
@@ -241,112 +241,112 @@ potential for memory corruption.</p>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">107
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#008000">// Checksum tracer-call is the following signature:
-</span><span style="color:#008000">// checksum(void * address, size_t * size, uint8_t * checksum)
-</span><span style="color:#008000">//  address - memory to checksum
-</span><span style="color:#008000">//  size - contains size to checksum
-</span><span style="color:#008000">//  checksum - 1 bytes memory that checksum will be written to
-</span><span style="color:#008000">// Return 0 on success, or &#39;-error&#39; on error (standard errno numbers).
-</span><span style="color:#008000"></span><span style="color:#00f">static</span> <span style="color:#2b91af">int</span> tracer_call_checksum_tracee_memory(tracer_data_t * tracer_data,
-                                              uint64_t * call_result,
-                                              <span style="color:#2b91af">void</span> * tracee_memory_to_checksum,
-                                              uint32_t * tracee_size_to_checksum,
-                                              uint8_t * tracee_checksum_result)
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">// Checksum tracer-call is the following signature:
+</span><span style="color:#75715e">// checksum(void * address, size_t * size, uint8_t * checksum)
+</span><span style="color:#75715e">//  address - memory to checksum
+</span><span style="color:#75715e">//  size - contains size to checksum
+</span><span style="color:#75715e">//  checksum - 1 bytes memory that checksum will be written to
+</span><span style="color:#75715e">// Return 0 on success, or &#39;-error&#39; on error (standard errno numbers).
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">tracer_call_checksum_tracee_memory</span>(tracer_data_t <span style="color:#f92672">*</span> tracer_data,
+                                              uint64_t <span style="color:#f92672">*</span> call_result,
+                                              <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span> tracee_memory_to_checksum,
+                                              uint32_t <span style="color:#f92672">*</span> tracee_size_to_checksum,
+                                              uint8_t <span style="color:#f92672">*</span> tracee_checksum_result)
 {
-    <span style="color:#2b91af">int</span> ret = 0;
-    uint32_t length_to_checksum = 0;
-    uint8_t * memory_to_checksum = NULL;
-    <span style="color:#00f">struct</span> iovec local_iov;
-    <span style="color:#00f">struct</span> iovec remote_iov;
-    ssize_t res = 0;
-    uint8_t checksum_result = 0;
+    <span style="color:#66d9ef">int</span> ret <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+    uint32_t length_to_checksum <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+    uint8_t <span style="color:#f92672">*</span> memory_to_checksum <span style="color:#f92672">=</span> NULL;
+    <span style="color:#66d9ef">struct</span> iovec local_iov;
+    <span style="color:#66d9ef">struct</span> iovec remote_iov;
+    ssize_t res <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+    uint8_t checksum_result <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
 
-    <span style="color:#00f">if</span> (read_tracee_dword(tracer_data, tracee_size_to_checksum, &amp;length_to_checksum) == -1)
+    <span style="color:#66d9ef">if</span> (read_tracee_dword(tracer_data, tracee_size_to_checksum, <span style="color:#f92672">&amp;</span>length_to_checksum) <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
     {
-        *call_result = -EFAULT;
-        <span style="color:#00f">goto</span> cleanup;
+        <span style="color:#f92672">*</span>call_result <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>EFAULT;
+        <span style="color:#66d9ef">goto</span> cleanup;
     }
 
-    <span style="color:#008000">// Validate we don&#39;t checksum protected region
-</span><span style="color:#008000"></span>    <span style="color:#00f">if</span> (is_in_protected_region(tracee_memory_to_checksum, length_to_checksum))
+    <span style="color:#75715e">// Validate we don&#39;t checksum protected region
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (is_in_protected_region(tracee_memory_to_checksum, length_to_checksum))
     {
-        *call_result = -EPERM;
-        <span style="color:#00f">goto</span> cleanup;
+        <span style="color:#f92672">*</span>call_result <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>EPERM;
+        <span style="color:#66d9ef">goto</span> cleanup;
     }
 
-    <span style="color:#008000">// Calculate the checksum
-</span><span style="color:#008000"></span>    memory_to_checksum = (uint8_t *)malloc(length_to_checksum);
-    <span style="color:#00f">if</span> (memory_to_checksum == NULL)
+    <span style="color:#75715e">// Calculate the checksum
+</span><span style="color:#75715e"></span>    memory_to_checksum <span style="color:#f92672">=</span> (uint8_t <span style="color:#f92672">*</span>)malloc(length_to_checksum);
+    <span style="color:#66d9ef">if</span> (memory_to_checksum <span style="color:#f92672">==</span> NULL)
     {
-        *call_result = -ENOMEM;
-        <span style="color:#00f">goto</span> cleanup;
+        <span style="color:#f92672">*</span>call_result <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>ENOMEM;
+        <span style="color:#66d9ef">goto</span> cleanup;
     }
 
-    local_iov.iov_base = memory_to_checksum;
-    local_iov.iov_len = length_to_checksum;
-    remote_iov.iov_base = tracee_memory_to_checksum;
-    remote_iov.iov_len = length_to_checksum;
-    errno = 0;
-    res = process_vm_readv(tracer_data-&gt;child_pid, &amp;local_iov, 1, &amp;remote_iov, 1, 0);
-    <span style="color:#00f">if</span> (res != length_to_checksum)
+    local_iov.iov_base <span style="color:#f92672">=</span> memory_to_checksum;
+    local_iov.iov_len <span style="color:#f92672">=</span> length_to_checksum;
+    remote_iov.iov_base <span style="color:#f92672">=</span> tracee_memory_to_checksum;
+    remote_iov.iov_len <span style="color:#f92672">=</span> length_to_checksum;
+    errno <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+    res <span style="color:#f92672">=</span> process_vm_readv(tracer_data<span style="color:#f92672">-&gt;</span>child_pid, <span style="color:#f92672">&amp;</span>local_iov, <span style="color:#ae81ff">1</span>, <span style="color:#f92672">&amp;</span>remote_iov, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>);
+    <span style="color:#66d9ef">if</span> (res <span style="color:#f92672">!=</span> length_to_checksum)
     {
-        <span style="color:#00f">if</span> (res != -1)
+        <span style="color:#66d9ef">if</span> (res <span style="color:#f92672">!=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
         {
-            <span style="color:#008000">// Partial read
-</span><span style="color:#008000"></span>            *call_result = -E2BIG;
+            <span style="color:#75715e">// Partial read
+</span><span style="color:#75715e"></span>            <span style="color:#f92672">*</span>call_result <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>E2BIG;
         }
-        <span style="color:#00f">else</span> <span style="color:#00f">if</span> (errno != ESRCH)
+        <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (errno <span style="color:#f92672">!=</span> ESRCH)
         {
-            *call_result = -errno;
+            <span style="color:#f92672">*</span>call_result <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>errno;
         }
-        <span style="color:#00f">else</span>
+        <span style="color:#66d9ef">else</span>
         {
-            <span style="color:#008000">// Fatal error
-</span><span style="color:#008000"></span>            ret = -1;
+            <span style="color:#75715e">// Fatal error
+</span><span style="color:#75715e"></span>            ret <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
         }
-        <span style="color:#00f">goto</span> cleanup;
+        <span style="color:#66d9ef">goto</span> cleanup;
     }
 
-    <span style="color:#00f">for</span> (size_t i = 0; i &lt; length_to_checksum; ++i)
+    <span style="color:#66d9ef">for</span> (size_t i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> length_to_checksum; <span style="color:#f92672">++</span>i)
     {
-        checksum_result ^= memory_to_checksum[i];
+        checksum_result <span style="color:#f92672">^=</span> memory_to_checksum[i];
     }
 
-    <span style="color:#008000">// Return result
-</span><span style="color:#008000"></span>    <span style="color:#00f">if</span> (is_in_protected_region(tracee_checksum_result, <span style="color:#00f">sizeof</span>(checksum_result)))
+    <span style="color:#75715e">// Return result
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (is_in_protected_region(tracee_checksum_result, <span style="color:#66d9ef">sizeof</span>(checksum_result)))
     {
-        *call_result = -EPERM;
-        <span style="color:#00f">goto</span> cleanup;
+        <span style="color:#f92672">*</span>call_result <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>EPERM;
+        <span style="color:#66d9ef">goto</span> cleanup;
     }
-    local_iov.iov_base = &amp;checksum_result;
-    local_iov.iov_len = <span style="color:#00f">sizeof</span>(checksum_result);
-    remote_iov.iov_base = tracee_checksum_result;
-    remote_iov.iov_len = <span style="color:#00f">sizeof</span>(checksum_result);
-    errno = 0;
-    res = process_vm_writev(tracer_data-&gt;child_pid, &amp;local_iov, 1, &amp;remote_iov, 1, 0);
-    <span style="color:#00f">if</span> (res == -1)
+    local_iov.iov_base <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span>checksum_result;
+    local_iov.iov_len <span style="color:#f92672">=</span> <span style="color:#66d9ef">sizeof</span>(checksum_result);
+    remote_iov.iov_base <span style="color:#f92672">=</span> tracee_checksum_result;
+    remote_iov.iov_len <span style="color:#f92672">=</span> <span style="color:#66d9ef">sizeof</span>(checksum_result);
+    errno <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+    res <span style="color:#f92672">=</span> process_vm_writev(tracer_data<span style="color:#f92672">-&gt;</span>child_pid, <span style="color:#f92672">&amp;</span>local_iov, <span style="color:#ae81ff">1</span>, <span style="color:#f92672">&amp;</span>remote_iov, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>);
+    <span style="color:#66d9ef">if</span> (res <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
     {
-        <span style="color:#00f">if</span> (errno != ESRCH)
+        <span style="color:#66d9ef">if</span> (errno <span style="color:#f92672">!=</span> ESRCH)
         {
-            *call_result = -errno;
+            <span style="color:#f92672">*</span>call_result <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>errno;
         }
-        <span style="color:#00f">else</span>
+        <span style="color:#66d9ef">else</span>
         {
-            <span style="color:#008000">// Fatal error
-</span><span style="color:#008000"></span>            ret = -1;
+            <span style="color:#75715e">// Fatal error
+</span><span style="color:#75715e"></span>            ret <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
         }
-        <span style="color:#00f">goto</span> cleanup;
+        <span style="color:#66d9ef">goto</span> cleanup;
     }
 
-    <span style="color:#008000">// Success
-</span><span style="color:#008000"></span>    *call_result = 0;
+    <span style="color:#75715e">// Success
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">*</span>call_result <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
 
 cleanup:
-    <span style="color:#00f">if</span> (memory_to_checksum != NULL)
+    <span style="color:#66d9ef">if</span> (memory_to_checksum <span style="color:#f92672">!=</span> NULL)
     {
         free(memory_to_checksum);
     }
-    <span style="color:#00f">return</span> ret;
+    <span style="color:#66d9ef">return</span> ret;
 }
 </code></pre></td></tr></table>
 </div>

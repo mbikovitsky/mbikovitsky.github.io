@@ -81,9 +81,9 @@ it into <a href="https://www.jetbrains.com/decompiler/" title="dotPeek .NET deco
 <p>Firstly, the code is not obfuscated, which is a relief. Secondly, there is a <code>PinForm</code>
 class which looks promising. Specifically, it has a method called
 <code>buttonCheckPin_Click</code>:</p>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
@@ -122,41 +122,41 @@ class which looks promising. Specifically, it has a method called
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c#" data-lang="c#"><span style="color:#00f">private</span> <span style="color:#00f">void</span> buttonCheckPin_Click(<span style="color:#2b91af">object</span> sender, EventArgs e)
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c#" data-lang="c#"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> buttonCheckPin_Click(<span style="color:#66d9ef">object</span> sender, EventArgs e)
 {
-  <span style="color:#2b91af">string</span> text = <span style="color:#00f">this</span>.richTextBoxPinCode.Text;
-  <span style="color:#00f">if</span> (text.Length != 4)
+  <span style="color:#66d9ef">string</span> text = <span style="color:#66d9ef">this</span>.richTextBoxPinCode.Text;
+  <span style="color:#66d9ef">if</span> (text.Length != <span style="color:#ae81ff">4</span>)
   {
-    <span style="color:#00f">this</span>.richTextBoxPinCode.Text = <span style="color:#a31515">&#34;&#34;</span>;
+    <span style="color:#66d9ef">this</span>.richTextBoxPinCode.Text = <span style="color:#e6db74">&#34;&#34;</span>;
   }
-  <span style="color:#00f">else</span>
+  <span style="color:#66d9ef">else</span>
   {
-    <span style="color:#00f">try</span>
+    <span style="color:#66d9ef">try</span>
     {
-      <span style="color:#2b91af">string</span> input = text;
-      <span style="color:#2b91af">string</span> str = text;
-      <span style="color:#00f">for</span> (<span style="color:#2b91af">int</span> index = 0; index &lt; 10; ++index)
+      <span style="color:#66d9ef">string</span> input = text;
+      <span style="color:#66d9ef">string</span> str = text;
+      <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> index = <span style="color:#ae81ff">0</span>; index &lt; <span style="color:#ae81ff">10</span>; ++index)
       {
-        input = <span style="color:#00f">this</span>.DoMD5(input);
-        str = <span style="color:#00f">this</span>.DoMD5(str);
+        input = <span style="color:#66d9ef">this</span>.DoMD5(input);
+        str = <span style="color:#66d9ef">this</span>.DoMD5(str);
       }
-      <span style="color:#00f">for</span> (<span style="color:#2b91af">int</span> index = 0; index &lt; 10; ++index)
-        input = <span style="color:#00f">this</span>.DoMD5(input);
-      <span style="color:#00f">if</span> (<span style="color:#a31515">&#34;2D3114BCC2E5C58BBAC77F04237723D9&#34;</span> == input)
+      <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> index = <span style="color:#ae81ff">0</span>; index &lt; <span style="color:#ae81ff">10</span>; ++index)
+        input = <span style="color:#66d9ef">this</span>.DoMD5(input);
+      <span style="color:#66d9ef">if</span> (<span style="color:#e6db74">&#34;2D3114BCC2E5C58BBAC77F04237723D9&#34;</span> == input)
       {
-        <span style="color:#2b91af">byte</span>[] byteArray = PinForm.StringToByteArray(str);
-        <span style="color:#00f">this</span>.DecryptFile(byteArray, <span style="color:#a31515">&#34;ForceCoinTransactionSigner.dll.enc&#34;</span>, <span style="color:#a31515">&#34;ForceCoinTransactionSigner.dll&#34;</span>);
-        <span style="color:#00f">this</span>.DecryptFile(byteArray, <span style="color:#a31515">&#34;db.txt.enc&#34;</span>, <span style="color:#a31515">&#34;db.txt&#34;</span>);
-        AppForm appForm = <span style="color:#00f">new</span> AppForm();
-        <span style="color:#00f">this</span>.Hide();
-        <span style="color:#2b91af">int</span> num = (<span style="color:#2b91af">int</span>) appForm.ShowDialog();
-        <span style="color:#00f">this</span>.Close();
+        <span style="color:#66d9ef">byte</span>[] byteArray = PinForm.StringToByteArray(str);
+        <span style="color:#66d9ef">this</span>.DecryptFile(byteArray, <span style="color:#e6db74">&#34;ForceCoinTransactionSigner.dll.enc&#34;</span>, <span style="color:#e6db74">&#34;ForceCoinTransactionSigner.dll&#34;</span>);
+        <span style="color:#66d9ef">this</span>.DecryptFile(byteArray, <span style="color:#e6db74">&#34;db.txt.enc&#34;</span>, <span style="color:#e6db74">&#34;db.txt&#34;</span>);
+        AppForm appForm = <span style="color:#66d9ef">new</span> AppForm();
+        <span style="color:#66d9ef">this</span>.Hide();
+        <span style="color:#66d9ef">int</span> num = (<span style="color:#66d9ef">int</span>) appForm.ShowDialog();
+        <span style="color:#66d9ef">this</span>.Close();
       }
     }
-    <span style="color:#00f">catch</span> (Exception ex)
+    <span style="color:#66d9ef">catch</span> (Exception ex)
     {
     }
-    <span style="color:#00f">this</span>.richTextBoxPinCode.Text = <span style="color:#a31515">&#34;&#34;</span>;
+    <span style="color:#66d9ef">this</span>.richTextBoxPinCode.Text = <span style="color:#e6db74">&#34;&#34;</span>;
   }
 }
 </code></pre></td></tr></table>
@@ -181,9 +181,9 @@ we observe:</p>
 <p><img src="/img/force-coin-transactions.png" alt="Transaction editing screen"></p>
 <p>Inspecting the newly-decrypted <code>db.txt</code> file, we can see it has several records similar
 to:</p>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
@@ -191,7 +191,7 @@ to:</p>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">0
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">0
 4
 Bob -&gt; Eve [c1d9f50f86825a1a2302ec2449c17196, c1a5298f939e87e8f962a5edfc206918]
 Eve -&gt; Bob [c1d9f50f86825a1a2302ec2449c17196, a64cf5823262686e1a28b2245be34ce0, 6b6e667a40e816c4da7bb4ab64cbb82b, 1824e8e0307cbfdd1993511ab040075c, 8b1a9953c4611296a827abf8c47804d7]
@@ -219,22 +219,22 @@ for this. Throwing it into our favorite decompiler, however, reveals that it was
 written in C++, which promises many &ldquo;fun&rdquo; hours of reversing. Is there an easier way?</p>
 <p>What happens if we place just a single letter in the &ldquo;What&rdquo; field? Inputting <code>&quot;a&quot;</code>
 (the letter &lsquo;a&rsquo;) into the field and signing the block yields:</p>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">Alice -&gt; Bob [0cc175b9c0f1b6a831c399e269772661]
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">Alice -&gt; Bob [0cc175b9c0f1b6a831c399e269772661]
 </code></pre></td></tr></table>
 </div>
 </div><p>And a quick check reveals that the hex string is the MD5 hash of <code>&quot;a&quot;</code>. What about
 <code>&quot;aa&quot;</code>?</p>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">Alice -&gt; Bob [0cc175b9c0f1b6a831c399e269772661, 4124bc0a9335c27f086f24ba207a4912]
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">Alice -&gt; Bob [0cc175b9c0f1b6a831c399e269772661, 4124bc0a9335c27f086f24ba207a4912]
 </code></pre></td></tr></table>
 </div>
 </div><p>The first string remains unchanged, but the second one is clearly <em>not</em> the MD5
@@ -243,23 +243,23 @@ perhaps this is the hash of <code>&quot;aa&quot;</code>? Another quick check rev
 <p><em>Hypothesis</em>: given a transaction with a &ldquo;What&rdquo; field $s$, the $i$-th hash
 in the database is a hash of $s[0 \dots i]$.</p>
 <p>This can be checked with, for example, the string <code>&quot;abc&quot;</code>:</p>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">Alice -&gt; Bob [0cc175b9c0f1b6a831c399e269772661, 187ef4436122d1cc2f40dc2b92f0eba0, 900150983cd24fb0d6963f7d28e17f72]
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">Alice -&gt; Bob [0cc175b9c0f1b6a831c399e269772661, 187ef4436122d1cc2f40dc2b92f0eba0, 900150983cd24fb0d6963f7d28e17f72]
 </code></pre></td></tr></table>
 </div>
 </div><p>And, indeed:</p>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">MD5(&#34;a&#34;)   == 0cc175b9c0f1b6a831c399e269772661
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">MD5(&#34;a&#34;)   == 0cc175b9c0f1b6a831c399e269772661
 MD5(&#34;ab&#34;)  == 187ef4436122d1cc2f40dc2b92f0eba0
 MD5(&#34;abc&#34;) == 900150983cd24fb0d6963f7d28e17f72
 </code></pre></td></tr></table>
