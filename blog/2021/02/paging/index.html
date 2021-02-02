@@ -69,7 +69,7 @@ See the complete collection <a href="https://bikodbg.com/blog/2021/01/unseen-shi
 <li><a href="#assemble-it-yourself">Assemble it yourself</a></li>
 <li><a href="#some-more-features">Some more &ldquo;features&rdquo;</a></li>
 </ul>
-<h1 id="introduction">Introduction</h1>
+<h2 id="introduction">Introduction</h2>
 <p>The <a href="https://archive.org/download/shabak-challenge-2021/shabak-challenge-2021.zip/" title="Paging challenge files">challenge</a> description reads:</p>
 <blockquote>
 <p>After going through the xv6 Memory Management chapter, I decided to challenge myself
@@ -81,7 +81,7 @@ book can be found <a href="https://pdos.csail.mit.edu/6.828/2018/xv6/book-rev11.
 on paging (I haven&rsquo;t read it, personally 😎). As for the ARM part, I highly recommend
 the introduction over at <a href="https://azeria-labs.com/writing-arm-assembly-part-1/" title="ARM Assembly Basics">Azeria Labs</a>.</p>
 <p>With the introductions done, let&rsquo;s get going.</p>
-<h1 id="a-high-level-overview">A high-level overview</h1>
+<h2 id="a-high-level-overview">A high-level overview</h2>
 <p>Looking at the supplied code, there are a lot of moving parts.
 Before we can get the flag, we&rsquo;ll have to understand how the system works.</p>
 <p>The system is an ARMv7-A emulator (as evidenced by the message printed on startup),
@@ -98,7 +98,7 @@ instruction:</p>
 <li>Authentication.</li>
 <li>Terminating the emulator.</li>
 </ol>
-<h2 id="paging">Paging</h2>
+<h3 id="paging">Paging</h3>
 <p>Looking inside <code>paging.py</code>, we can see that we have a two-level paging structure.
 The physical address of the Page Directory is stored in <code>TTBR0</code>, the PD contains
 the physical addresses of Page Tables, which in turn point to actual pages with data.
@@ -131,7 +131,7 @@ to be writable, all the entries leading up to it must have the <code>Write</code
 <em>and</em> the target page is being accessed for a write operation.</p>
 <p>The <code>NX</code> bit indicates whether the target page is Not eXecutable. For a page
 to be executable, all the entries leading up to it must have the <code>NX</code> bit set to <code>0</code>.</p>
-<h2 id="hypercalls">Hypercalls</h2>
+<h3 id="hypercalls">Hypercalls</h3>
 <p>The hypercall mechanism provides a lot of functionality, and we&rsquo;ll get back to that
 later on. For now, we can note the following:</p>
 <ol>
@@ -179,7 +179,7 @@ memory (see <code>run_hypercall</code> in <code>paging.py</code>).
 };
 </code></pre></td></tr></table>
 </div>
-</div><h1 id="yes-and">Yes, and&hellip;</h1>
+</div><h2 id="yes-and">Yes, and&hellip;</h2>
 <p>We now understand, in broad strokes, how the system works. However, we are no closer
 to understanding how we should go about retrieving the flag. The emulator does
 not read the flag by itself, and it does not expose any functionality
@@ -270,7 +270,7 @@ used to set this field to an arbitrary value.</p>
 <li>Deactivate paging to execute the command.</li>
 </ol>
 <p>Except&hellip; authentication doesn&rsquo;t work.</p>
-<h1 id="a-bit-too-far">A bit too far</h1>
+<h2 id="a-bit-too-far">A bit too far</h2>
 <p>The way authentication is <em>meant</em> to work (according to the code comments), is by
 setting <code>self._curr_perm</code> to <code>Hypercall.GROUP_PERM_SUPER</code> (by default the value is
 <code>Hypercall.GROUP_PERM_USER</code>). When a hypercall is invoked, the implementation goes
@@ -339,7 +339,7 @@ will change <code>groups</code> from <code>0b1 == 1</code> to <code>0b101 == 5</
 <p>Note that the page we&rsquo;re accessing need not actually exist in physical memory.
 In this case, the paging mechanism will throw an exception, which will be suppressed
 inside <code>hook_read</code> in <code>main.py</code>.</p>
-<h1 id="assemble-it-yourself">Assemble it yourself</h1>
+<h2 id="assemble-it-yourself">Assemble it yourself</h2>
 <p>Our plan now looks like this:</p>
 <ol>
 <li>Set up paging:
@@ -359,7 +359,7 @@ will continue executing after paging is enabled.</li>
 <p>Note that the emulator disallows the use of <code>.</code> directives in the assembly code,
 so we can&rsquo;t use <code>.ascii</code> to bring the command with us. Handling this is left
 as an exercise for the reader 😎.</p>
-<h1 id="some-more-features">Some more &ldquo;features&rdquo;</h1>
+<h2 id="some-more-features">Some more &ldquo;features&rdquo;</h2>
 <p>While looking into the paging implementation, I noticed it is possible to extend
 the amount of physical memory by 4 bytes at a time. In fact, one of my early solution
 attempts made use of this. See if you can find this &ldquo;feature&rdquo; 👾.</p>
