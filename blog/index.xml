@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2021 — Michael Bikovitsky — CC BY-SA 4.0.</copyright>
-    <lastBuildDate>Tue, 02 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://bikodbg.com/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 04 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://bikodbg.com/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Shabak Challenge 2021: shabaKernel</title>
+      <link>https://bikodbg.com/blog/2021/02/shaba-kernel/</link>
+      <pubDate>Thu, 04 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://bikodbg.com/blog/2021/02/shaba-kernel/</guid>
+      <description>0x70C 0xB4C 0xB4C 0x5B4 0x1E8 0x830 0xA24 0x208 0x028 0x140 0x5EC</description>
+    </item>
+    
     <item>
       <title>Shabak Challenge 2021: Paging</title>
       <link>https://bikodbg.com/blog/2021/02/paging/</link>
