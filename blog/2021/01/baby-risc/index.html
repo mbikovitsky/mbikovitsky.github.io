@@ -17,15 +17,7 @@ pre { font-family: 'Ubuntu Mono', monospace; }
 code { font-family: 'Ubuntu Mono', monospace; }
 </style>
 
-<script>
-    MathJax = {
-        tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']],
-        }
-    };
-</script>
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
 
 </head>
 
@@ -127,7 +119,7 @@ get the flag?</p>
 the instructions provided by the simulator do not provide for reading files. Indeed,
 they do not seem to be fit for any nefarious purpose! The print instructions do not use
 any unsafe format strings, and all stack accesses are validated so as not to overflow.
-Here goes out hope for RCE.</p>
+Here goes our hope for RCE.</p>
 <p>But do we actually have to execute arbitrary code? Perhaps it&rsquo;s time we took a look
 at what the simulator actually does.</p>
 <p>Looking in <code>main.c</code>, we notice that the simulator first generates some sort of
