@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Shabak Challenge 2021: Python4 | Biko&#39;s House of Horrors</title>
+
+    <style>body{margin:40px auto;max-width:650px;line-height:1.6;font-size:18px;color:#444;padding:0 10px}h1,h2,h3{line-height:1.2}div.header h1{padding-top:0;padding-bottom:8px;margin-bottom:24px;font-size:18px;font-weight:400;border-bottom:1px solid}.header-menu{float:right}ul.pagination{list-style-type:none;text-align:center;padding:0}ul.pagination>li{padding:0 8px;display:inline-block}div.footer{border-top:1px solid;text-align:center}img{max-width:100%;max-height:100%;display:block;margin-left:auto;margin-right:auto}</style>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Tinos&family=Ubuntu+Mono&display=swap" rel="stylesheet">
+
+<style>
+body { font-family: 'Tinos', serif; }
+pre { font-family: 'Ubuntu Mono', monospace; }
+code { font-family: 'Ubuntu Mono', monospace; }
+</style>
+
+
+
+</head>
+
+
+<body>
+<div class="header">
+    <h1>
+        <a href="/">Biko&#39;s House of Horrors</a>
+        <div class="header-menu">
+            <a href="/blog/">blog</a>
+            <a href="/writing/">writing</a>
+            <a href="/about/">about</a>
+        </div>
+    </h1>
+</div>
+<div id="content">
+
+<header>
+    <h1>Shabak Challenge 2021: Python4</h1>
+    
+
+<div class="post-meta">
+    Date &#x5b;
+    <time datetime="2021-02-06">Feb 6, 2021</time>
+    &#x5d;
+</div>
+</header>
+<article>
+    <p>This is part of my series of writeups on the Shabak 2021 CTF challenges.
+See the complete collection <a href="https://bikodbg.com/blog/2021/01/unseen-shield/" title="Shabak Challenge 2021 table of contents">here</a>.</p>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#python-you-say">Python, you say?</a></li>
+<li><a href="#doesnt-look-like-anything-to-me">Doesn&rsquo;t look like anything to me</a></li>
+<li><a href="#who-mitigates-the-mitigations">Who mitigates the mitigations</a></li>
+<li><a href="#two-of-your-finest-string-please">Two of your finest string, please</a></li>
+<li><a href="#seek-and-ye-shall-find">Seek, and ye shall find</a></li>
+<li><a href="#the-gift-that-keeps-on-giving">The gift that keeps on giving</a></li>
+<li><a href="#hop-to-it">Hop to it</a></li>
+<li><a href="#into-the-forest-i-go">Into the forest I go</a></li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<p>The <a href="https://archive.org/download/shabak-challenge-2021/shabak-challenge-2021.zip/" title="Python4 challenge files">challenge</a> description reads:</p>
+<blockquote>
+<p>Welcome to 2021! We decided to follow tradition and start working on the next
+python version.</p>
+<p>Don&rsquo;t worry, we made sure no vulnerabilities are exploitable, using modern mitigation
+techniques.</p>
+<p>Have fun running your scripts!!</p>
+</blockquote>
+<p>This is it, folks. This is the big one.</p>
+<h2 id="python-you-say">Python, you say?</h2>
+<p>No, not really. Which is probably for the best, since we have less code to read.</p>
+<p>What we have here is <a href="https://bikodbg.com/blog/2021/01/baby-risc/" title="Shabak Challenge 2021: BabyRISC">yet</a> <a href="https://bikodbg.com/blog/2021/02/paging/" title="Shabak Challenge 2021: Paging">another</a> interpreter with a fairly
+limited set of instructions:</p>
+<ul>
+<li>Control flow
+<ul>
+<li><code>nop</code>
+<ul>
+<li>Prints <code>&quot;Nope!&quot;</code>.</li>
+</ul>
+</li>
+<li><code>label &lt;label_name&gt;</code>
+<ul>
+<li>Sets a label in the code, what can be called or jumped to.</li>
+<li>Execution begins at the <code>main</code> label.</li>
+</ul>
+</li>
+<li><code>call &lt;label&gt;</code>
+<ul>
+<li>Calls the specified label with a fresh local variable context (see below).</li>
+</ul>
+</li>
+<li><code>ret</code>
+<ul>
+<li>Returns from a <code>call</code> or from <code>main</code>.</li>
+<li>The last instruction executed by a script must be <code>ret</code>. Otherwise,
+the interpreter terminates.</li>
+</ul>
+</li>
+<li><code>jmp &lt;label&gt;</code>
+<ul>
+<li>Jumps to a given label.</li>
+</ul>
+</li>
+<li><code>cbz &lt;variable_name&gt; &lt;label&gt;</code>
+<ul>
+<li>Jumps to the given label if the given variable is 0.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Variables
+<ul>
+<li><code>def &lt;variable_name&gt; &lt;value&gt;</code>
+<ul>
+<li>Defines a new variable with the given name and initializes it to the given value.</li>
+<li>Terminates the interpreter if a variable with the same name already exists.</li>
+<li>Value must be either a hex 64-bit integer (e.g. <code>0x1337</code>) or a string
+(e.g. <code>&quot;Pasten&quot;</code>).</li>
+</ul>
+</li>
+<li><code>mov &lt;dest&gt; &lt;src&gt;</code>
+<ul>
+<li>Moves the contents of the <code>src</code> variable into <code>dest</code>.</li>
+</ul>
+</li>
+<li><code>print &lt;variable&gt;</code>
+<ul>
+<li>Prints the contents of the given variable.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>&ldquo;Arithmetic&rdquo;
+<ul>
+<li><code>add &lt;dest&gt; &lt;var1&gt; &lt;var2&gt;</code>
+<ul>
+<li>Stores in the <code>dest</code> variable the sum of <code>var1</code> and <code>var2</code>, which must be
+of the same type.</li>
+<li>This instruction will be explored <a href="#two-of-your-finest-string-please">later on</a>.</li>
+</ul>
+</li>
+<li><code>sub &lt;dest&gt; &lt;var1&gt; &lt;var2&gt;</code>
+<ul>
+<li>Stores in the <code>dest</code> variable the difference of <code>var1</code> and <code>var2</code>, which must be
+of the same type.</li>
+<li>This instruction will be explored <a href="#hop-to-it">later on</a>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Registers
+<ul>
+<li><code>load &lt;var&gt; &lt;register&gt;</code>
+<ul>
+<li>Stores in the variable the contents of the register.</li>
+<li>The variable must be of integer type.</li>
+</ul>
+</li>
+<li><code>store &lt;register&gt; &lt;var&gt;</code>
+<ul>
+<li>Stores in the register the contents of the variable.</li>
+<li>The variable must be of integer type.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>The interpreter reads a script from <code>stdin</code> and executes it. It continues to
+read and execute scripts until either a script fails or the execution timeout
+(60 seconds) is reached.</p>
+<p>The interpreter has 10 64-bit integer registers, named <code>$0</code> to <code>$9</code>. These registers
+are initialized to zero on startup and are shared among all scripts. That is,
+they are not reset to zero for each new script. They are also preserved across
+the <code>call</code> instruction.</p>
+<p>The main function in the interpreter is <code>execute_interpreter_function</code>. For each script,
+it is first called to begin execution at the <code>main</code> label. Each invocation of the <code>call</code>
+instruction results in a call to this function, as well. This function also holds
+the local variables for each script function.</p>
+<p><img src="https://media.giphy.com/media/TEEm7KGKMgbAfUE9VH/giphy.gif" alt="Spock & Number One, Star Trek: Discovery, &ldquo;Fascinating.""></p>
+<h2 id="doesnt-look-like-anything-to-me">Doesn&rsquo;t look like anything to me</h2>
+<p>Like in previous challenges, the flag is stored in a file called <code>flag</code> in the current
+working directory. Unfortunately for us, the interpreter doesn&rsquo;t provide any
+instructions for reading files or executing arbitrary commands. What&rsquo;s worse, all
+the string manipulation instructions validate everything, so we can&rsquo;t overflow.
+And there are no instructions that do anything even remotely nefarious.</p>
+<p>But what&rsquo;s this? In the <code>init.c</code> file? Mayhaps we overlooked something?</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">/* Implemented in glibc */</span>
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">arch_prctl</span>(<span style="color:#66d9ef">int</span> code, <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> <span style="color:#f92672">*</span> addr);
+
+<span style="color:#75715e">#define NO_SHADOW_STACK_ATTR __attribute__((no_sanitize(&#34;shadow-call-stack&#34;)))
+</span><span style="color:#75715e">#define CONSTRUCTOR_ATTR __attribute__((constructor))
+</span><span style="color:#75715e"></span>
+__attribute__((aligned(<span style="color:#ae81ff">16</span>))) <span style="color:#66d9ef">uint8_t</span> SHADOW_STACK[<span style="color:#ae81ff">4096</span>] <span style="color:#f92672">=</span> {<span style="color:#ae81ff">0</span>};
+
+CONSTRUCTOR_ATTR NO_SHADOW_STACK_ATTR <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">initiliaze_shadow_stack</span>(<span style="color:#66d9ef">void</span>)
+{
+    <span style="color:#75715e">// In clang&#39;s &#39;shadow-call-stack&#39;, the shadow stack is stored in &#39;gs&#39;.
+</span><span style="color:#75715e"></span>    arch_prctl(ARCH_SET_GS, (<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>)SHADOW_STACK);
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>The <code>arch_prctl</code> function here sets the base address for the <code>GS</code> register to
+the address of the <code>SHADOW_STACK</code> buffer.</p>
+<p>Looking in the supplied <code>Makefile</code>, we can also see that the interpreter is compiled
+with <code>-fsanitize=shadow-call-stack</code>. Let&rsquo;s see what the <a href="https://releases.llvm.org/7.0.1/tools/clang/docs/ShadowCallStack.html" title="ShadowCallStack - Clang 7 documentation">documentation</a>
+has to say:</p>
+<blockquote>
+<p>ShadowCallStack is an <strong>experimental</strong> instrumentation pass, currently only
+implemented for x86_64 and aarch64, that protects programs against return address
+overwrites (e.g. stack buffer overflows.) It works by saving a function&rsquo;s return
+address to a separately allocated &lsquo;shadow call stack&rsquo; in the function prolog and
+checking the return address on the stack against the shadow call stack in the
+function epilog.</p>
+</blockquote>
+<p>Great, so even <em>if</em> we manage to overwrite the return address, we&rsquo;ll promptly crash.</p>
+<p>Time to pack it in.</p>
+<p>Nothing to see here.</p>
+<p><img src="https://media.giphy.com/media/77PW0C7xUEsrC/giphy.gif" alt="Leonard McCoy, Star Trek: Beyond, &ldquo;Well that&rsquo;s just typical.""></p>
+<h2 id="who-mitigates-the-mitigations">Who mitigates the mitigations</h2>
+<p>Alright, fine, let&rsquo;s throw the binary into Ghidra and see how this shadow stack
+thingy works. After all, the README boasts of the modern mitigation techniques
+used here.</p>
+<p>Here&rsquo;s what the prologue looks like:</p>
+<p><img src="/img/python4-shadow-stack-prologue.png" alt="Shadow stack function prologue"></p>
+<p>And the epilogue:</p>
+<p><img src="/img/python4-shadow-stack-epilogue.png" alt="Shadow stack function epilogue"></p>
+<p>Based on this we can conclude that the shadow stack looks like this:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">shadow_stack</span>
+{
+    size_t offset;
+    <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span> return_address[<span style="color:#ae81ff">511</span>];
+};
+</code></pre></td></tr></table>
+</div>
+</div><p>Upon function entry, the return address is stored in the next available slot,
+and just before returning the return address is compared to the saved one.
+If a mismatch is detected - the program crashes.</p>
+<p>However&hellip;</p>
+<p><img src="/img/python4-shadow-stack-regs.png" alt="Shadow stack is adjacent to interpreter registers"></p>
+<p>The shadow stack is stored immediately before the register array! And since there is
+no bounds checking on the shadow stack, if we recurse deeply enough we&rsquo;ll be able
+to overwrite the return address by writing to the appropriate register.</p>
+<p>And can we control the recursion from the Python4 script? Yes! Since every <code>call</code>
+instruction results in another call to <code>execute_interpreter_function</code>.</p>
+<p><img src="https://media.giphy.com/media/9uIStfgxoUj5wV8BGG/giphy.gif" alt="Michael Burnham, Star Trek: Discovery, &ldquo;Hell yeah.""></p>
+<p>We are back in the game.</p>
+<h2 id="two-of-your-finest-string-please">Two of your finest string, please</h2>
+<p>All of this is still academic, since we can&rsquo;t overwrite the return address. Or can we?
+Let&rsquo;s take another look at those string manipulation instructions.</p>
+<p>The <code>def</code> instruction looks solid. It simply copies its operand to the local variable,
+with bounds checking.</p>
+<p>What about <code>add</code>? Here&rsquo;s the relevant code from the <code>exec_add</code> function:</p>
+<!-- markdownlint-capture -->
+<!-- markdownlint-disable -->
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-1"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-1"> 1</a>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-2"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-2"> 2</a>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-3"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-3"> 3</a>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-4"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-4"> 4</a>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-5"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-5"> 5</a>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-6"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-6"> 6</a>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-7"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-7"> 7</a>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-8"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-8"> 8</a>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-9"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-9"> 9</a>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-10"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-10">10</a>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-11"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-11">11</a>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-12"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-12">12</a>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-13"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-13">13</a>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-14"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-14">14</a>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f" id="exec-add-15"><a style="outline: none; text-decoration:none; color:inherit" href="#exec-add-15">15</a>
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">interpreter_var_t <span style="color:#f92672">*</span> dest_var <span style="color:#f92672">=</span> find_var(script<span style="color:#f92672">-&gt;</span>local_vars, instruction<span style="color:#f92672">-&gt;</span>operands.add_operands.dest_var);
+interpreter_var_t <span style="color:#f92672">*</span> op1_var <span style="color:#f92672">=</span> find_var(script<span style="color:#f92672">-&gt;</span>local_vars, instruction<span style="color:#f92672">-&gt;</span>operands.add_operands.op1_var);
+interpreter_var_t <span style="color:#f92672">*</span> op2_var <span style="color:#f92672">=</span> find_var(script<span style="color:#f92672">-&gt;</span>local_vars, instruction<span style="color:#f92672">-&gt;</span>operands.add_operands.op2_var);
+<span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span> op1_str <span style="color:#f92672">=</span> op1_var<span style="color:#f92672">-&gt;</span>var_value.var_value_string;
+<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span> op2_str <span style="color:#f92672">=</span> op2_var<span style="color:#f92672">-&gt;</span>var_value.var_value_string;
+<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span> dest_str <span style="color:#f92672">=</span> dest_var<span style="color:#f92672">-&gt;</span>var_value.var_value_string;
+dest_var<span style="color:#f92672">-&gt;</span>var_type <span style="color:#f92672">=</span> VAR_TYPE_STR;
+<span style="color:#66d9ef">if</span> ((strlen(op1_str) <span style="color:#f92672">+</span> strlen(op2_str) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">sizeof</span>(dest_var<span style="color:#f92672">-&gt;</span>var_value.var_value_string))
+{
+    puts(<span style="color:#e6db74">&#34;String addition failed - size too long&#34;</span>);
+    <span style="color:#66d9ef">return</span> INSTRUCTION_EXEC_CMD_ERROR;
+}
+strncpy(dest_str, op1_str, <span style="color:#66d9ef">sizeof</span>(dest_var<span style="color:#f92672">-&gt;</span>var_value.var_value_string));
+strncat(dest_str, op2_str, strlen(op2_str));
+</code></pre></td></tr></table>
+</div>
+</div>
+<!-- markdownlint-restore -->
+<p>There is an overflow here. It&rsquo;s tricky to see, but it&rsquo;s there. And it is <em>beautiful</em>.</p>
+<p>What happens if we do <code>add var1 var2 var1</code>? This should be equivalent to
+<code>var1 = var2 + var1</code>, but is it really? First, at <a href="#exec-add-14">line 14</a>,
+the code copies the contents of <code>var2</code> into <code>var1</code>. Then, at <a href="#exec-add-15">line 15</a>,
+it copies the contents of <code>var1</code> into <code>var1</code>. But <code>var1</code> now contains the same
+string that&rsquo;s in <code>var2</code>! So what we&rsquo;re really doing is <code>var1 = var2 + var2</code>.</p>
+<p>Crucially, the bounds check at <a href="#exec-add-9">line 9</a> misses this case. So if
+<code>strlen(var2) + strlen(var1)</code> is smaller than the buffer size (because <code>var1</code> is empty,
+for instance), but <code>2 * strlen(var2)</code> isn&rsquo;t, we&rsquo;re going to overflow.</p>
+<p><img src="https://media.giphy.com/media/Z97RJsyc5wLEgw5pNN/giphy.gif" alt="Agnes Jurati, Star Trek: Picard, &ldquo;a work of art&rdquo;"></p>
+<p>That&rsquo;s all well and good, but is this overflow useful? Here&rsquo;s the stack layout
+of the <code>execute_interpreter_function</code> function, where the local variables
+reside:</p>
+<p><img src="/img/python4-stack-setup.png" alt="execute_interpreter_function stack setup"></p>
+<p><img src="/img/python4-stack-layout.png" alt="execute_interpreter_function stack layout"></p>
+<p>And here&rsquo;s how the local variables are laid out:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">#define VAR_NAME_MAX_LEN (16)
+</span><span style="color:#75715e">#define VAR_STR_VALUE_MAX_LEN (64)
+</span><span style="color:#75715e">#define LOCAL_VARS_AMOUNT (32)
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">interpreter_var_s</span>
+{
+    <span style="color:#66d9ef">char</span> var_name[VAR_NAME_MAX_LEN];
+    interpreter_var_type_t var_type;
+    <span style="color:#66d9ef">union</span> <span style="color:#a6e22e">var_value_u</span>
+    {
+        <span style="color:#66d9ef">char</span> var_value_string[VAR_STR_VALUE_MAX_LEN];
+        <span style="color:#66d9ef">int64_t</span> var_value_int;
+    } var_value;
+} interpreter_var_t;
+
+<span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">interpreter_local_vars_s</span>
+{
+    interpreter_var_t vars[LOCAL_VARS_AMOUNT];
+} interpreter_local_vars_t;
+</code></pre></td></tr></table>
+</div>
+</div><p>It&rsquo;s math time! To overwrite the return address we have to write <code>64 + 6 * 8 + 8 == 120</code>
+bytes:</p>
+<ul>
+<li><code>64</code> to overwrite the local variable buffer (<code>VAR_STR_VALUE_MAX_LEN</code>).</li>
+<li><code>6 * 8 == 48</code> to overwrite the saved registers.</li>
+<li><code>8</code> for the return address.</li>
+</ul>
+<p>Since our overflow technique writes a given string twice, we need a string of length
+<code>60</code>, with the desired return address at the end.</p>
+<p>There&rsquo;s just one problem.</p>
+<p>Where do we go?</p>
+<h2 id="seek-and-ye-shall-find">Seek, and ye shall find</h2>
+<p>Since we have control of the return address, we&rsquo;ll need to employ some ROP magic.
+There are several options for how to get a shell:</p>
+<ol>
+<li><a href="https://github.com/david942j/one_gadget" title="david942j/one_gadget: The best tool for finding one gadget RCE in libc.so.6">&ldquo;One gadget&rdquo;</a>.</li>
+<li><a href="https://gist.github.com/ricardo2197/8c7f6f5b8950ed6771c1cd3a116f7e62" title="Return-to dl-resolve"><code>ret2dlresolve</code></a>.</li>
+<li><a href="https://en.wikipedia.org/wiki/Sigreturn-oriented_programming" title="Sigreturn-oriented programming - Wikipedia">SROP</a>.</li>
+<li>The good old <a href="https://en.wikipedia.org/wiki/Return-to-libc_attack" title="Return-to-libc attack - Wikipedia"><code>ret2libc</code></a>.</li>
+</ol>
+<p>We&rsquo;re going to use the classic method, because if it ain&rsquo;t broke - don&rsquo;t fix it<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>.
+Specifically, we want to be able to call <code>system(&quot;/bin/sh&quot;)</code>. For that, we need to
+do two things:</p>
+<ol>
+<li>Place the parameter <code>&quot;/bin/sh&quot;</code> somewhere in memory.</li>
+<li>Return to <code>system</code> using the buff-o we found.</li>
+</ol>
+<p>The first part is kinda easy: since we can write arbitrary data to the interpreter
+registers, we can use them for storage.</p>
+<p>Unfortunately for us (again), there&rsquo;s ASLR. So really we have two new problems:</p>
+<ol>
+<li>Find the address of the interpreter registers array in memory.</li>
+<li>Find the address of <code>system</code>.</li>
+</ol>
+<p>Let&rsquo;s deal with the first one. We can use the same trick as for patching the shadow
+stack:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">label main
+    def reg 0x0
+    def is_reg_zero 0x0
+    def zero 0x0
+    load reg $0
+    sub is_reg_zero reg zero
+    cbz is_reg_zero recurse
+    print reg
+    ret
+label recurse
+    call main
+    ret
+</code></pre></td></tr></table>
+</div>
+</div><p>This script will recurse until the first time the shadow stack overflows into
+the interpreter registers, and print that value.</p>
+<p>Okay, but where does that point? Time to fire up GDB, set a breakpoint on <code>exec_print</code>,
+and do some more math<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>.</p>
+<p><em><strong>Quick sidenote</strong>: since we&rsquo;ll be relying heavily on the layout of various binaries
+in memory, we have to ensure we use the correct versions. The supplied <code>Dockerfile</code>
+gives the image we have to use, and there is also a <code>libc</code> binary we have to place
+inside.</em></p>
+<p><img src="/img/python4-executable-leak.png" alt="GDB output of executable address leak"></p>
+<p><img src="/img/python4-executable-offset.png" alt="GDB offset of leaked address from executable base"></p>
+<p>Looking in Ghidra, we can also see that this offset, <code>0x41F8</code>, points at
+the address just after the call to <code>find_var</code> inside <code>exec_load</code>.</p>
+<p>Things are looking up.</p>
+<p><img src="https://media.giphy.com/media/C0s0NQymqS3WMMWp72/giphy.gif" alt="Sam Rutherford, Star Trek: Lower Decks, &ldquo;This is gonna be great!""></p>
+<h2 id="the-gift-that-keeps-on-giving">The gift that keeps on giving</h2>
+<p>Now for the tricky bit - leaking the base address of <code>libc</code>. Unfortunately,
+none of the interpreter functions are used as callbacks in <code>libc</code>, so we can&rsquo;t
+use the same trick with the shadow stack.</p>
+<p>What <em>can</em> we do then? We can note that the buffer overflow we found can also
+be used to leak information from the stack. Consider again the structure of a local
+variable:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">#define VAR_NAME_MAX_LEN (16)
+</span><span style="color:#75715e">#define VAR_STR_VALUE_MAX_LEN (64)
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">interpreter_var_s</span>
+{
+    <span style="color:#66d9ef">char</span> var_name[VAR_NAME_MAX_LEN];
+    interpreter_var_type_t var_type;
+    <span style="color:#66d9ef">union</span> <span style="color:#a6e22e">var_value_u</span>
+    {
+        <span style="color:#66d9ef">char</span> var_value_string[VAR_STR_VALUE_MAX_LEN];
+        <span style="color:#66d9ef">int64_t</span> var_value_int;
+    } var_value;
+} interpreter_var_t;
+</code></pre></td></tr></table>
+</div>
+</div><p>And consider this:</p>
+<ol>
+<li>Initially, the <code>var_type</code> field of all local variables is initialized to
+<code>VAR_TYPE_UNDEF</code> (so we can&rsquo;t directly read from them). However, the rest of
+the structure is not initialized (see the <code>initialize_local_vars</code> function
+in <code>interpreter.c</code>).</li>
+<li><code>VAR_TYPE_STR == 0</code>.</li>
+<li>Our overflow writes a null-terminated string (with <a href="https://en.cppreference.com/w/c/string/byte/strncat" title="strncat, strncat_s - cppreference.com"><code>strncat</code></a>).</li>
+<li>We&rsquo;re exploiting a little-endian machine.</li>
+</ol>
+<p>All this means that if we can overflow from one variable and into the next, we can
+set the <code>var_type</code> of this next variable to <code>0</code>, by overwriting the first byte
+of <code>var_type</code> with the null-terminator of the overflowing string. This will allow
+us to read whatever happened to be on the stack!</p>
+<p>Is this useful? It might be. If we call a complex function inside <code>libc</code>, it just
+might leave some information on the stack that we can use to calculate the <code>libc</code>
+base. Lucky for us, we can call <code>printf</code>:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">label main
+    def reg 0x4141414141414141
+    print reg
+    call leak
+    ret
+label leak
+    ret
+</code></pre></td></tr></table>
+</div>
+</div><p>This will call <code>printf</code>, then immediately cause <code>execute_interpreter_function</code>
+to be called again, which will allocate a boatload of local variables on the stack.
+Hopefully, we&rsquo;ll be able to leak something interesting.</p>
+<p>Once again, we fire up GDB and go hunting.</p>
+<p><img src="https://media.giphy.com/media/Yqc7d8UoE5KdlQZgFV/giphy.gif" alt="Christopher Pike, Star Trek: Discovery, &ldquo;Good luck out there, Captain&rdquo;"></p>
+<p>Specifically, we set a breakpoint on <code>execute_interpreter_function</code> and dump
+the stack<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>:</p>
+<p><img src="/img/python4-stack-dump.png" alt="GDB execute_interpreter_function stack dump"></p>
+<p>(The 352 here is the size of the local variables array divided by 8, the pointer size.)</p>
+<p>pwndbg&rsquo;s coloring really helps here: we&rsquo;re looking for any addresses that are marked
+as code (red) or data (pink). There are quite a few options to choose from, however
+it appears that some of these addresses move around. That is, they do not appear at
+the same stack location across different runs of the interpreter.</p>
+<p>At offset <code>0xA10</code>, however, we find what we&rsquo;re looking for:</p>
+<ol>
+<li>An address within the <code>libc</code> data section.</li>
+<li>That doesn&rsquo;t move around on the stack across runs of the interpreter.</li>
+<li>Is located at the beginning of the local variable data buffer, so we can easily read
+it via the <code>print</code> instruction.</li>
+</ol>
+<p>Here&rsquo;s how we leak it:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">label main
+    def reg 0x4141414141414141
+    print reg
+    call leak
+    ret
+label leak
+    def padding0 0x00
+    def padding1 0x00
+    def padding2 0x00
+    def padding3 0x00
+    def padding4 0x00
+    def padding5 0x00
+    def padding6 0x00
+    def padding7 0x00
+    def padding8 0x00
+    def padding9 0x00
+    def padding10 0x00
+    def padding11 0x00
+    def padding12 0x00
+    def padding13 0x00
+    def padding14 0x00
+    def padding15 0x00
+    def padding16 0x00
+    def padding17 0x00
+    def padding18 0x00
+    def padding19 0x00
+    def padding20 0x00
+    def padding21 0x00
+    def padding22 0x00
+    def padding23 0x00
+    def padding24 0x00
+    def padding25 0x00
+    def padding26 0x00
+    def PATTERN &#34;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&#34;
+    def OVERFLOW_HERE &#34;&#34;
+    add OVERFLOW_HERE PATTERN OVERFLOW_HERE
+    print AAAAAAAAAAAAAAAA
+    ret
+</code></pre></td></tr></table>
+</div>
+</div><p>Notice how the name of the variable the script prints out is 16 characters-long,
+even though the limit is 15 characters. The variable type, <code>VAR_TYPE_STR</code>, serves
+as the null-terminator.</p>
+<p>We&rsquo;re also relying on the fact that the address we&rsquo;re leaking has no null bytes
+except the two most significant ones.</p>
+<p>And the address we get is at offset <code>0x1ED560</code> from <code>libc</code> base:</p>
+<p><img src="/img/python4-libc-offset.png" alt="GDB offset of leaked address from libc base"></p>
+<h2 id="hop-to-it">Hop to it</h2>
+<p>We now have the base addresses of both the interpreter and of <code>libc</code>. Therefore, we can
+calculate the addresses of the register array (where we&rsquo;ll place the <code>&quot;/bin/sh&quot;</code> string)
+and of the <code>system</code> function.</p>
+<p>All that remains is to build a ROP chain that will load the address of <code>&quot;/bin/sh&quot;</code> into
+<code>RDI</code> and call <code>system</code>. A great way to do this is with <a href="https://github.com/JonathanSalwan/ROPgadget" title="JonathanSalwan/ROPgadget">ROPgadget</a>.
+The tool presents many possible gadgets, but a particularly interesting one
+is at offset <code>0x2544</code> in the interpreter:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nasm" data-lang="nasm"><span style="color:#a6e22e">mov</span> rdi, r15
+<span style="color:#a6e22e">lea</span> rsi, [rsp <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x40</span>]
+<span style="color:#a6e22e">call</span> [rbx]
+</code></pre></td></tr></table>
+</div>
+</div><p>Why is it interesting? Because <a href="#two-of-your-finest-string-please">a long time ago</a>
+we observed that <code>execute_interpreter_function</code> saves both the <code>RBX</code>
+and the <code>R15</code> registers, and restores them before returning. So if, while overflowing
+the stack, we also ensure that <code>R15</code> gets set with the address of <code>&quot;/bin/sh&quot;</code>
+and <code>RBX</code> gets set with an address that holds a pointer to <code>system</code>, we&rsquo;re golden!</p>
+<p><img src="https://media.giphy.com/media/BHJ8BRu1CgTjoDfvoo/giphy.gif" alt="Star Trek: Discovery, spore jump"></p>
+<p>There&rsquo;s just one tiny problem<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>. All these addresses that we are supposed to write
+to the stack have null bytes in them, and we&rsquo;re using <code>strncat</code>. We need to solve this
+somehow.</p>
+<p>Fortunately, the solution is right under our noses, in the implementation of
+the <code>sub</code> instruction. When we do <code>sub var1 var2 var3</code>, where <code>var2</code> and <code>var3</code> are
+both string variables, then if <code>var3</code> is a suffix of <code>var2</code>, <code>var1</code> will receive
+<code>var2</code> without this suffix. For example:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">def var1 0x0
+def var2 &#34;Pasten&#34;
+def var3 &#34;en&#34;
+sub var1 var2 var3
+print var1
+</code></pre></td></tr></table>
+</div>
+</div><p>Will print <code>&quot;Past&quot;</code>.</p>
+<p>What happens if we do this instead?</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">def var1 &#34;Pasten&#34;
+def var2 &#34;en&#34;
+sub var1 var1 var2
+print var1
+</code></pre></td></tr></table>
+</div>
+</div><p>The output will be the same, but more importantly the variable buffer for <code>var1</code>
+will contains <code>&quot;Past\0n&quot;</code>. In essence, we replaced a single byte in the string
+with a null byte.</p>
+<p>The trick here is that this &ldquo;subtraction&rdquo; does no bounds checking on the buffers!
+After all, we&rsquo;re operating on two valid string variables here, so there&rsquo;s
+no chance subtraction of a suffix will cause an overflow 😉.</p>
+<p>This means we can first overflow the stack with a buffer that has placeholders instead
+of the null bytes, and then surgically implant nulls using subtraction. We&rsquo;ll just have
+to start from the last null and move inwards.</p>
+<h2 id="into-the-forest-i-go">Into the forest I go</h2>
+<p><a href="#python-you-say">Remember</a> how the interpreter allows us to run multiple scripts
+in one session? This means that we can run a script, parse its output, and modify
+the next script we send accordingly. And, since it&rsquo;s the same process running
+all those scripts, the addresses we leak will stay relevant.</p>
+<p>So here&rsquo;s the plan:</p>
+<ol>
+<li>Send a <a href="#seek-and-ye-shall-find">script</a> to leak the executable&rsquo;s base address.</li>
+<li>Send a <a href="#the-gift-that-keeps-on-giving">script</a> to leak the <code>libc</code> base address.</li>
+<li>Create a <a href="#hop-to-it">script</a> that:
+<ol>
+<li>Places <code>&quot;/bin/sh&quot;</code> into one of the interpreter registers.</li>
+<li>Places the address of <code>system</code> into another register.</li>
+<li>Overflows the stack so as to trigger a ROP gadget that will call <code>system</code>.</li>
+<li><a href="#who-mitigates-the-mitigations">Patches</a> the shadow stack with the address
+of the ROP gadget.</li>
+</ol>
+</li>
+<li>Send that script.</li>
+<li>Send the <code>cat flag</code> command to the shell.</li>
+</ol>
+<p><img src="/img/python4-flag.png" alt="Python4 flag retrieval"></p>
+<p><img src="https://media.giphy.com/media/PnDRO1werTjHI7YSmc/giphy.gif" alt="Michael Burnham, Star Trek: Discovery, &ldquo;YES!""></p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>Actually, I&rsquo;ve been informed by a knowledgeable third-party that the one-gadget
+method doesn&rsquo;t work for this challenge; the <code>ret2dlresolve</code> requires too much
+data to be placed in memory; and SROP requires a lot of data to be placed
+on the stack and we still have to leak an address in <code>libc</code> for it to work.
+All in all, the classic method is the &ldquo;simplest&rdquo;. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>Alternatively, let <a href="https://github.com/pwndbg/pwndbg" title="pwndbg/pwndbg: Exploit Development and Reverse Engineering with GDB Made Easy">pwndbg</a> do all the hard work. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>The keen-eyed may notice that the dump begins at offset 8 from <code>RSP</code>.
+The explanation to this can be seen in the stack layout screenshot
+<a href="#two-of-your-finest-string-please">above</a> 😎. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p>Another one?! Surely you jest. <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+</article>
+
+
+    </div>
+<div class="footer">
+    
+    
+    <div class="footer-links">
+        <a href="https://github.com/mbikovitsky">GitHub</a>
+        <a href="https://twitter.com/bikodbg">Twitter</a>
+    </div>
+    
+
+    
+    
+    <div class="copyright">© 2021 — Michael Bikovitsky — CC BY 4.0</div>
+    
+</div>
+</body>
+
+</html>
