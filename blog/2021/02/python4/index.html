@@ -316,8 +316,7 @@ dest_var<span style="color:#f92672">-&gt;</span>var_type <span style="color:#f92
     <span style="color:#66d9ef">return</span> INSTRUCTION_EXEC_CMD_ERROR;
 }
 strncpy(dest_str, op1_str, <span style="color:#66d9ef">sizeof</span>(dest_var<span style="color:#f92672">-&gt;</span>var_value.var_value_string));
-strncat(dest_str, op2_str, strlen(op2_str));
-</code></pre></td></tr></table>
+strncat(dest_str, op2_str, strlen(op2_str));</code></pre></td></tr></table>
 </div>
 </div>
 <!-- markdownlint-restore -->
@@ -752,18 +751,18 @@ of the ROP gadget.</li>
 method doesn&rsquo;t work for this challenge; the <code>ret2dlresolve</code> requires too much
 data to be placed in memory; and SROP requires a lot of data to be placed
 on the stack and we still have to leak an address in <code>libc</code> for it to work.
-All in all, the classic method is the &ldquo;simplest&rdquo;. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+All in all, the classic method is the &ldquo;simplest&rdquo;.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2" role="doc-endnote">
-<p>Alternatively, let <a href="https://github.com/pwndbg/pwndbg" title="pwndbg/pwndbg: Exploit Development and Reverse Engineering with GDB Made Easy">pwndbg</a> do all the hard work. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p>Alternatively, let <a href="https://github.com/pwndbg/pwndbg" title="pwndbg/pwndbg: Exploit Development and Reverse Engineering with GDB Made Easy">pwndbg</a> do all the hard work.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3" role="doc-endnote">
 <p>The keen-eyed may notice that the dump begins at offset 8 from <code>RSP</code>.
 The explanation to this can be seen in the stack layout screenshot
-<a href="#two-of-your-finest-string-please">above</a> 😎. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<a href="#two-of-your-finest-string-please">above</a> 😎.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:4" role="doc-endnote">
-<p>Another one?! Surely you jest. <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p>Another one?! Surely you jest.&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>

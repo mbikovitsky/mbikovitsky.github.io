@@ -1,68 +1,42 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
     <loc>https://bikodbg.com/</loc>
     <lastmod>2021-02-06T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://bikodbg.com/blog/</loc>
     <lastmod>2021-02-06T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://bikodbg.com/blog/2021/02/python4/</loc>
     <lastmod>2021-02-06T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://bikodbg.com/blog/2021/02/shaba-kernel/</loc>
     <lastmod>2021-02-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://bikodbg.com/blog/2021/02/paging/</loc>
     <lastmod>2021-02-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://bikodbg.com/blog/2021/01/force-coin/</loc>
     <lastmod>2021-01-31T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://bikodbg.com/blog/2021/01/recall/</loc>
     <lastmod>2021-01-29T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://bikodbg.com/blog/2021/01/nfc/</loc>
     <lastmod>2021-01-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://bikodbg.com/blog/2021/01/baby-risc/</loc>
     <lastmod>2021-01-25T12:54:00+02:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://bikodbg.com/blog/2021/01/unseen-shield/</loc>
     <lastmod>2021-01-25T12:53:00+02:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://bikodbg.com/blog/2020/05/crash-to-zork/</loc>
     <lastmod>2020-05-02T19:36:27+03:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://bikodbg.com/about/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://bikodbg.com/writing/</loc>
   </url>
-  
 </urlset>
