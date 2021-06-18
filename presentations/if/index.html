@@ -14,23 +14,17 @@
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
 
 		<script>
-			function buildPlayUrl(storyUrl, tads) {
+			function buildPlayUrl(storyUrl) {
 				const absoluteStoryUrl = new URL(storyUrl, document.baseURI);
 
-				if (tads) {
-					const playUrl = new URL("http://gs.tads.io/");
-					absoluteStoryUrl.protocol = "http:";  // It doesn't like HTTPS
-					playUrl.searchParams.append("storyfile", absoluteStoryUrl.href);
-					return playUrl.href;
-				} else {
-					const playUrl = new URL("https://iplayif.com/");
-					playUrl.searchParams.append("story", absoluteStoryUrl.href);
-					return playUrl.href;
-				}
+				const playUrl = new URL("https://iplayif.com/");
+				playUrl.searchParams.append("story", absoluteStoryUrl.href);
+
+				return playUrl.href;
 			}
 
-			function createStoryIframe(storyUrl, tads = false) {
-				const playUrl = buildPlayUrl(storyUrl, tads);
+			function createStoryIframe(storyUrl) {
+				const playUrl = buildPlayUrl(storyUrl);
 
 				const iframe = document.createElement("iframe");
 				iframe.dataset.src = playUrl;
@@ -620,34 +614,6 @@ Instead of examining the table for the first time:
 
 					<section>
 						<h2>#include &lt;adv3.h&gt;</h2>
-					</section>
-
-					<section>
-						<script>
-							if (new URL(document.baseURI).protocol === 'https:') {
-								const link = document.createElement("a");
-								link.href = buildPlayUrl(
-									"demos/tads/Demonstration_dbg_rls.t3",
-									tads = true
-								);
-								link.textContent = "here";
-
-								const p = document.createElement("p");
-								p.appendChild(document.createTextNode("Go "));
-								p.appendChild(link);
-								p.appendChild(document.createTextNode(" to play the demo"));
-
-								document.currentScript.insertAdjacentElement("afterend", p);
-							} else {
-								document.currentScript.insertAdjacentElement(
-									"afterend",
-									createStoryIframe(
-										"demos/tads/Demonstration_dbg_rls.t3",
-										tads = true
-									)
-								);
-							}
-						</script>
 
 						<aside class="notes">
 							<ul>
