@@ -1,0 +1,48 @@
+"Demonstration" by The Almighty Random
+
+Include Bitwise Operators by Bart Massey.
+
+Release along with a website, the source text, and an interpreter.
+
+Chapter 0 - Common Ground
+
+A book is a kind of thing.
+A book has some text called printing. The printing of a book is usually "blank".
+A book has a number called the interesting page. The interesting page of a book is usually 1337.
+
+Understand the command "read" as something new.
+Understand "read [something]" as reading.
+Reading is an action applying to one thing, requiring light.
+Check reading:
+	if the noun is not a book, say "You can't read that!" instead;
+	if the printing of the noun is "blank", say "The book appears to be empty." instead.
+Carry out reading:
+	say "You flip through the book, trying to find anything of interest.";
+	say "On page [the interesting page of the noun], you find the following statements:[line break]";
+	say "[printing of the noun][line break]".
+Report reading:
+	do nothing.
+
+To decide what number is int-max:
+	let num be 1;
+	while num is not less than 0:
+		now num is num bit-shl by 1;
+	decide on bit-not num.
+
+Chapter 1 - Where Things Get Real
+
+The Great Hall is a room.
+
+A table is a supporter in the Great Hall. The description of the table is "[if nothing is on the table]It's a table, Jim.[end if]".
+Instead of examining the table for the first time:
+	say "Dammit, Jim! I'm a parser, not a descriptionist!"
+
+On the table is a book. The printed name of the book is "old book". Understand "old book" as the book. The description of the book is "An old book. Filled by arcane knowledge, by the looks of it." The printing of the book is "[book-print]".
+To say book-print:
+	say "1) 2 + 2 = [2 plus 2].";
+	say "2) 10 % 3 = [remainder after dividing 10 by 3].";
+	say "3) INT_MAX = [int-max].";
+	say "4) INT_MIN = [bit-not int-max]."
+
+When play begins:
+	say "Welcome to the house of horrors![line break]".

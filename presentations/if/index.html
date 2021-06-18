@@ -1,0 +1,1076 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Interactive Fiction</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/serif.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+
+		<script>
+			function buildPlayUrl(storyUrl, tads) {
+				const absoluteStoryUrl = new URL(storyUrl, document.baseURI);
+
+				if (tads) {
+					const playUrl = new URL("http://gs.tads.io/");
+					playUrl.searchParams.append("storyfile", absoluteStoryUrl.href);
+					return playUrl.href;
+				} else {
+					const playUrl = new URL("https://iplayif.com/");
+					playUrl.searchParams.append("story", absoluteStoryUrl.href);
+					return playUrl.href;
+				}
+			}
+
+			function createStoryIframe(storyUrl, tads = false) {
+				const playUrl = buildPlayUrl(storyUrl, tads);
+
+				const iframe = document.createElement("iframe");
+				iframe.dataset.src = playUrl;
+				iframe.frameBorder = 0;
+				iframe.className = "r-stretch";
+
+				return iframe
+			}
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>Interactive Fiction</h1>
+				</section>
+
+				<!-- Part 1 -->
+
+				<section>
+					<video data-autoplay data-src="img/getlamp.webm" controls></video>
+
+					<aside class="notes">
+						<ul>
+							<li>An excerpt from the <a href="http://www.getlamp.com/">Get Lamp</a> documentary.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section>
+					<section>
+						<p>You are standing in an open field west of a white house, with a boarded front door.</p>
+						<p>There is a small demo here.</p>
+					</section>
+
+					<section>
+						<script>
+							document.currentScript.insertAdjacentElement(
+								"afterend",
+								createStoryIframe("http://www.ifarchive.org/if-archive/games/zcode/LostPig.z8")
+							);
+						</script>
+
+						<aside class="notes">
+							<p>Ask audience what to do. Run for a couple of minutes.</p>
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<h2>What is IF?</h2>
+
+					<aside class="notes">
+						In truth, the term is <em>very</em> broad. I'll be talking mostly about
+						games that use text as their primary medium, with little to no graphics.
+						This still leaves <em>a lot</em> on the floor, and we'll get to that
+						at the end of the talk.
+					</aside>
+				</section>
+
+				<!-- Part 2 -->
+
+				<section>
+					<h2>A Brief History</h2>
+					<q>Before the first person shooter there was the second person thinker</q>
+
+					<aside class="notes">
+						<ul>
+							<li><em>Very</em> brief, we don't have time for everything.</li>
+							<li>Somewhat biased towards the games I've personally played :)</li>
+							<li>Quote is from <a href="http://www.getlamp.com/">the documentary</a>.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section>
+					<h2>The Setting</h2>
+					<ul>
+						<li>The mid-70s</li>
+						<li>Computers are big</li>
+						<li>No graphics (mostly)</li>
+					</ul>
+				</section>
+
+				<section>
+					<section>
+						<h2><a href="https://if50.substack.com/p/1976-adventure">1976: Adventure</a></h2>
+
+						<aside class="notes">
+							<ul>
+								<li>Full name: <em>Colossal Cave Adventure</em>.</li>
+								<li>
+									<em>Technically</em>, not the first parser adventure, but it's first enough.
+									AFAIK the first <em>known</em> one is <a href="https://intfiction.org/t/wander-1974-pre-adventure-text-adventure-system/8423">this</a>.
+								</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<script>
+							document.currentScript.insertAdjacentElement(
+								"afterend",
+								createStoryIframe("http://www.ifarchive.org/if-archive/games/zcode/Advent.z5")
+							);
+						</script>
+
+						<aside class="notes">
+							<ul>
+								<li>Well, we're exploring a cave system. Obviously.</li>
+								<li>The cave itself does not appear until somewhat later in the game...</li>
+								<li>This is a port to Inform 6 (?), so some of the quirks of the original are lost.
+									<ul>
+										<li>The parser is more advanced, for instance.</li>
+									</ul>
+								</li>
+								<li>This is also the expanded version, so there's a score.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<ul>
+							<li>Based on a real cave!
+								<ul>
+									<li>The Mammoth Cave system in Kentucky</li>
+									<li>Specifically, Colossal Cave</li>
+								</ul>
+							</li>
+							<li>Magic, treasure, and whatnot...</li>
+						</ul>
+
+						<aside class="notes">
+							<ul>
+								<li>Thus, Colossal Cave Adventure.</li>
+								<li>Will and his wife, both MIT undergraduates, were part of a team that mapped this system.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<ul>
+							<li>Developed by Will Crowther</li>
+							<li>Expanded by Don Woods</li>
+							<li>DEC PDP-10</li>
+							<li>Fortran</li>
+							<li>Rudimentary parser</li>
+							<!-- <li>Save/restore is a memdump!</li> I don't know why I originally wrote this. Can't find the source now. -->
+						</ul>
+
+						<aside class="notes">
+							<ul>
+								<li>Will wrote this game for his daughters to play.</li>
+								<li>Eventually, lost interest, posted the game to ARPANET, and forgot about it.</li>
+								<li>
+									A year later, Don Woods (Stanford grad student) contacted him to get the source,
+									and proceeded to expand the game.
+								</li>
+								<li>Added more content, a scoring system, an objective (returning the treasures aboveground).</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<p>It was a hit</p>
+
+						<aside class="notes">
+							<ul>
+								<li>People would spend hours mapping the game, solving the puzzles.</li>
+								<li>They were hooked.</li>
+							</ul>
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>1979: Infocom</h2>
+					</section>
+
+					<section>
+						<q>Then Adventure hit MIT and everything changed</q>
+						<small>The Inform Designer's Manual, Graham Nelson</small>
+
+						<aside class="notes">
+							<ul>
+								<li>See <a href="https://if50.substack.com/p/1977-zork">here</a>.</li>
+								<li>Basically, some MIT dudes decided that they can do <em>Adventure</em> better. And they did.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<script>
+							document.currentScript.insertAdjacentElement(
+								"afterend",
+								createStoryIframe("https://eblong.com/infocom/gamefiles/zork1-r88-s840726.z3")
+							);
+						</script>
+
+						<aside class="notes">
+							<ul>
+								<li>Their first game was Zork.</li>
+								<li>Originally for the PDP-10, like Adventure.</li>
+								<li>First released in 1977.</li>
+								<li>By 1979 is was <em>huge</em>, scratching the limits of the MDL language.</li>
+								<li>After founding the company, Zork was split into a trilogy to fit on floppies.</li>
+								<li>Shipped in <a href="https://if50.substack.com/p/1983-suspended">1980</a>.</li>
+								<li>Became a cultural phenomenon: "Playboy covered it; so did Time, and American astronaut Sally Ride was reportedly obsessed with it."</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<ul>
+							<li>The largest and most widely-known company producing IF</li>
+							<li>Zork, A Mind Forever Voyaging, The Hitchhiker's Guide to the Galaxy</li>
+						</ul>
+
+						<aside class="notes">
+							<ul>
+								<li>As in, several of their games would be in the top-10 charts.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<ul>
+							<li>Sophisticated parser</li>
+							<li>Cross-platform adventures</li>
+							<li>Feelies</li>
+						</ul>
+
+						<aside class="notes">
+							<ul>
+								<li>For instance, parser now allows for chaining commands ("take lamp and drop keys", etc.)</li>
+								<li>The Z-Machine will also be mentioned a little later in the talk. It's still alive.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<h2>Deadline</h2>
+						<img data-src="img/murder_scene.jpg" alt="Murder scene feelie from Deadline" class="r-stretch">
+
+						<aside class="notes">
+							<ul>
+								<li>An example feelie from <a href="http://infocom.elsewhere.org/gallery/deadline_grey/deadline.html">Deadline</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<h3>A Mind Forever Voyaging</h3>
+						<img data-src="img/amfv_map1b.jpg" alt="AMFV map" class="r-stretch">
+
+						<aside class="notes">
+							<ul>
+								<li>And another one from <a href="http://infocom.elsewhere.org/gallery/amfv/amfv.html">AMFV</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<ul>
+							<li>Bought by Activision in 1986</li>
+							<li class="fragment">Shut down in 1989</li>
+							<li class="fragment">Trademark abandoned in 2002</li>
+						</ul>
+
+						<aside class="notes">
+							<ul>
+								<li><a href="https://en.wikipedia.org/wiki/Infocom">Source</a>.</li>
+							</ul>
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>1989: Legend Entertainment</h2>
+
+						<aside class="notes">
+							<ul>
+								<li><a href="https://en.wikipedia.org/wiki/Legend_Entertainment">Source</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<ul>
+							<li>Gateway</li>
+							<li>Eric the Unready</li>
+							<li>Spellcasting</li>
+						</ul>
+
+						<aside class="notes">
+							<ul>
+								<li>And others!</li>
+								<li>Company founded by Infocom veterans.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<img data-src="img/5103-frederik-pohl-s-gateway-dos-screenshot-first-location-start.jpg" alt="Gateway UI screenshot">
+
+						<aside class="notes">
+							<ul>
+								<li>Demo!</li>
+								<li>Image <a href="https://www.mobygames.com/game/dos/frederik-pohls-gateway/screenshots/gameShotId,5103/">source</a>.</li>
+							</ul>
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Modern Times</h2>
+					</section>
+
+					<section>
+						<ul>
+							<li>Commercial IF slowly died</li>
+							<li class="fragment">But the spirit lived on!
+								<ul>
+									<li>Usenet groups</li>
+									<li>InfoTaskForce</li>
+									<li><a href="https://ifcomp.org/">Competitions</a></li>
+									<li><a href="https://narrascope.org/">A conference!</a></li>
+								</ul>
+							</li>
+						</ul>
+
+						<aside class="notes">
+							<ul>
+								<li>The companies died-off, but there were still people who wanted to play the games!</li>
+								<li>InfoTaskForce - a bunch of Australian guys that reverse-engineered the Z-Machine.</li>
+								<li>In 2020 there were 103 entries to IFComp!</li>
+								<li>Changing the rules of the genre.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<script>
+							document.currentScript.insertAdjacentElement(
+								"afterend",
+								createStoryIframe("http://www.ifarchive.org/if-archive/games/zcode/Galatea.zblorb")
+							);
+						</script>
+
+						<aside class="notes">
+							<ul>
+								<li>Nominee, Best Game; Nominee, Best NPCs; Winner, Best Individual NPC - 2000 XYZZY Awards</li>
+								<li><a href="https://ifdb.org/viewgame?id=urxrv27t7qtu52lb">Link</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<script>
+							document.currentScript.insertAdjacentElement(
+								"afterend",
+								createStoryIframe("http://www.ifarchive.org/if-archive/games/competition2003/zcode/slouch/slouch.z5")
+							);
+						</script>
+
+						<aside class="notes">
+							<ul>
+								<li>Winner, Best Game; Nominee, Best Writing; Winner, Best Story; Winner, Best Setting; Nominee, Best NPCs; Winner, Best Individual NPC; Nominee, Best Individual PC; Nominee, Best Use of Medium - 2003 XYZZY Awards</li>
+								<li><a href="https://ifdb.org/viewgame?id=032krqe6bjn5au78">Link</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<h2>Windows kernel</h2>
+
+						<img data-src="img/zork.gif" alt="Zork in the debugger" class="r-stretch">
+
+						<aside class="notes">
+							<ul>
+								<li>Z-Machine running in the Windows kernel, because why not.</li>
+								<li><a href="https://bikodbg.com/blog/2020/05/crash-to-zork/">Here's</a> how this works.</li>
+							</ul>
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<p>And then... something magical happened</p>
+				</section>
+
+				<section>
+					<p>But we'll get to that</p>
+				</section>
+
+				<!-- Part 3 -->
+
+				<section>
+					<h2>Authoring</h2>
+
+					<aside class="notes">
+						<ul>
+							<li>There were, and still are, <em>a lot</em> of different authoring systems.</li>
+							<li>Legend had their own thing, Infocom. Adventure was custom-built...</li>
+							<li>I'll talk about some of the interesting ones.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section>
+					<section>
+						<h2>ZIL</h2>
+					</section>
+
+					<section>
+						<img data-src="img/zil.jpg" alt="ZIL truck">
+
+						<aside class="notes">
+							<ul>
+								<li>Image <a href="https://commons.wikimedia.org/wiki/File:Zi%C5%82001.jpg">source</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<ul>
+							<li>Zork Implementation Language</li>
+							<li>A derivative of MDL
+								<ul>
+									<li class="fragment">Which is a derivative of Lisp</li>
+								</ul>
+							</li>
+							<li>Created by Infocom</li>
+						</ul>
+					</section>
+
+					<section>
+						<ul>
+							<li>There's a <a href="https://foss.heptapod.net/zilf/zilf/-/wikis/home">modern compiler</a>!</li>
+							<li>And an <a href="https://archive.org/details/Learning_ZIL_Steven_Eric_Meretzky_1995">old manual</a> :)</li>
+						</ul>
+
+						<aside class="notes">
+							<ul>
+								<li>Manual by Steve Meretzky! Of AMFV fame.</li>
+								<li>More info about ZIL <a href="http://blog.zarfhome.com/2019/04/what-is-zil-anyway.html">here</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<h2>&lt;OBJECT DEMO&gt;</h2>
+					</section>
+
+					<section>
+						<script>
+							document.currentScript.insertAdjacentElement(
+								"afterend",
+								createStoryIframe("demos/zil/demonstration.z8")
+							);
+						</script>
+
+						<aside class="notes">
+							<ul>
+								<li><a href="demos/zil/demonstration.z8">Game file</a>.</li>
+								<li><a href="demos/zil/demonstration.zil">Source</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<pre><code data-trim data-noescape class="language-plaintext"><script type="text/template">
+<ROUTINE BOOK-F ()
+    <COND (<VERB? READ>
+            <TELL
+"You flip through the book, trying to find anything of interest.|
+On page 1337, you find the following statements:" CR>
+            <TELL "1) 2 + 2 = " N <+ 2 2> CR>
+            <TELL "2) 10 % 3 = " N <MOD 10 3> CR>
+            <TELL "3) INT_MAX = " N <INT-MAX> CR>
+            <TELL "4) INT_MIN = " N <BCOM <INT-MAX>> CR>
+            <CRLF>)
+          (<VERB? EXAMINE>
+            <TELL "An old book. Filled by arcane knowledge,
+by the looks of it." CR>)
+    >
+>
+						</script></code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2><a href="http://inform7.com/">Inform</a></h2>
+					</section>
+
+					<section>
+						<ul>
+							<li>Created by Graham Nelson in 1993
+								<ul>
+									<li>Inform 6 released 1996</li>
+									<li>Object-oriented, procedural</li>
+								</ul>
+							</li>
+							<li>Inform 7 released 2006
+								<ul>
+									<li>Natural language programming</li>
+									<li>Declarative, procedural</li>
+								</ul>
+							</li>
+							<li>Compiles for Z-Machine and Glulx</li>
+						</ul>
+
+						<aside class="notes">
+							<ul>
+								<li>
+									We'll be talking about Inform 7, but there's a really interesting
+									story about the creation of the original Inform.
+									<a href="https://if50.substack.com/p/1993-curses">Here</a>.
+								</li>
+								<li>
+									The first version was released on May 9, 1993.
+									I think it's very fitting that it happened on Victory Day.
+									In a sense, this was also a victory.
+								</li>
+								<li>Glulx is a (relatively) new IF VM.</li>
+								<li>It's currently in kinda maintenance mode. Last release was in 2015.</li>
+								<li>Should be open-sourced in the future. See the website for info.</li>
+								<li>Fun fact: currently Inform 7 compiles to Inform 6, which is compiled to Z-Code or Glulx.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<h2>A demo is a kind of thing</h2>
+					</section>
+
+					<section>
+						<iframe data-src="demos/inform/index.html" frameborder="0" class="r-stretch"></iframe>
+					</section>
+
+					<section>
+						<pre><code data-trim data-noescape class="language-inform7">
+A table is a supporter in the Great Hall.
+The description of the table is
+"[if nothing is on the table]It's a table, Jim.[end if]".
+Instead of examining the table for the first time:
+	say "Dammit, Jim! I'm a parser, not a descriptionist!"
+						</code></pre>
+					</section>
+
+					<section>
+						<img class="r-stretch" data-src="img/inform.png" alt="Inform 7 source code">
+
+						<aside class="notes">
+							<ul>
+								<li>That's it. That's the whole source.</li>
+							</ul>
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2><a href="https://www.tads.org/index.htm">TADS</a></h2>
+					</section>
+
+					<section>
+						<ul>
+							<li>Text Adventure Development System
+								<ul>
+									<li>Michael J. Roberts, 1988</li>
+								</ul>
+							</li>
+							<li>Similar to C, C++ and the like</li>
+						</ul>
+
+						<aside class="notes">
+							<ul>
+								<li>Last release was in 2013.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<h2>#include &lt;adv3.h&gt;</h2>
+					</section>
+
+					<section>
+						<script>
+							document.currentScript.insertAdjacentElement(
+								"afterend",
+								createStoryIframe(
+									"demos/tads/Demonstration/Demonstration_dbg_rls.t3",
+									tads = true
+								)
+							);
+						</script>
+
+						<aside class="notes">
+							<ul>
+								<li><a href="demos/tads/Demonstration_dbg_rls.t3">Game file</a>.</li>
+								<li><a href="demos/tads/Demonstration.t">Source</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<pre><code data-trim data-noescape class="language-c"><script type="text/template">
+++ book: Readable 'old book' 'old book'
+	"An old book. Filled by arcane knowledge, by the looks of it."
+	readDesc {
+		"You flip through the book, trying to find anything of interest.\n";
+		"On page 1337, you find the following statements:\n";
+		"1) 2 + 2 = <<2 + 2>>.\n";
+		"2) 10 % 3 = <<10 % 3>>.\n";
+		"3) INT_MAX = <<intMax()>>.\n";
+		"4) INT_MIN = <<~intMax()>>.\n";
+	}
+;
+						</script></code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2><a href="https://twinery.org/">Twine</a></h2>
+					</section>
+
+					<section>
+						<ul>
+							<li>System for CYOA games</li>
+							<li>Created by Chris Klimas in 2009
+								<ul>
+									<li>Now maintained by the community</li>
+								</ul>
+							</li>
+							<li>Author-friendly</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>(if:$examined != true)[Demo!]</h2>
+					</section>
+
+					<section>
+						<iframe data-src="demos/twine/Demonstration.html" frameborder="0" class="r-stretch"></iframe>
+
+						<aside class="notes">
+							<ul>
+								<li><a href="demos/twine/Demonstration.html">Game file</a>.</li>
+								<li>The game file can be edited with <a href="https://twinery.org/2">this</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<img data-src="img/twine_gui.png" alt="Twine UI">
+					</section>
+
+					<section><img data-src="img/twine_code.png" alt="Twine code"></section>
+				</section>
+
+				<section>
+					<section>
+						<h2><a href="https://www.inklestudios.com/ink/">ink</a></h2>
+					</section>
+
+					<section>
+						<ul>
+							<li>Developed by <a href="https://www.inklestudios.com/">inkle</a></li>
+							<li><q>A narrative scripting language for games</q></li>
+							<li>Integration with Unity</li>
+						</ul>
+
+						<aside class="notes">
+							<ul>
+								<li>Recently open-sourced!</li>
+								<li>
+									The idea is that <b>ink</b> manages the narrative script,
+									but the game engine is responsible for driving it.
+								</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<h2>=== demo ===</h2>
+					</section>
+
+					<section>
+						<iframe data-src="demos/ink/Demonstration/index.html" frameborder="0" class="r-stretch"></iframe>
+
+						<aside class="notes">
+							<ul>
+								<li><a href="demos/ink/Demonstration.ink">Source</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<pre><code data-trim data-noescape class="language-plaintext">
+Welcome to the house of horrors!
+
+-> intro
+
+=== intro ===
+In front of you, you can see a table.
+
++ {not table_first_time} [Examine the table] -> table_first_time
++ {table_first_time} [Examine the table] -> table_second_time
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<h2>Some stats</h2>
+
+					<table>
+						<thead>
+						  <tr>
+							<th>Z-Machine</th>
+							<th>Glulx</th>
+							<th>TADS</th>
+							<th>Twine</th>
+							<th>ink</th>
+							<th>Web</th>
+						  </tr>
+						</thead>
+						<tbody>
+						  <tr>
+							<td>45</td>
+							<td>23</td>
+							<td>3</td>
+							<td>45</td>
+							<td>3</td>
+							<td>7</td>
+						  </tr>
+						</tbody>
+					</table>
+
+					<aside class="notes">
+						<ul>
+							<li>Total submissions from IFComp 2020.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<!-- Part 4 -->
+
+				<section>
+					<h2>What is IF?</h2>
+					<q class="fragment">The truth is fluid. The truth is subjective.</q>
+
+					<aside class="notes">
+						<ul>
+							<li><a href="http://www.midwinter.com/lurk/guide/084.html">Quote</a>.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section>
+					<h2><a href="https://blue-lacuna.textories.com/">Blue Lacuna</a></h2>
+					<img class="r-stretch" data-src="img/lacuna.png" alt="Blue Lacuna prologue">
+
+					<aside class="notes">
+						It's a parser game, but by default it behaves like Twine...
+					</aside>
+				</section>
+
+				<section>
+					<h2><a href="https://www.fallenlondon.com/">Fallen London</a></h2>
+					<img data-src="img/fallen_london.png" alt="Fallen London sample screen" class="r-stretch">
+				</section>
+
+				<section>
+					<section>
+						<h2>Visual novels?</h2>
+					</section>
+
+					<section>
+						<h2><a href="http://ahatestory.com/">Analogue: A Hate Story</a></h2>
+						<img data-src="img/screen-intro.png" alt="Analogue: A Hate Story dialogue" class="r-stretch">
+
+						<aside class="notes">
+							<ul>
+								<li>All images are from the game's <a href="http://ahatestory.com/">website</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<h2><a href="http://ahatestory.com/">Analogue: A Hate Story</a></h2>
+						<img data-src="img/screen-menu.png" alt="Analogue: A Hate Story block search" class="r-stretch">
+					</section>
+
+					<section>
+						<h2><a href="http://ahatestory.com/">Analogue: A Hate Story</a></h2>
+						<img data-src="img/screen-block.png" alt="Analogue: A Hate Story block" class="r-stretch">
+					</section>
+
+					<section>
+						<h2><a href="https://www.inklestudios.com/overboard/">Overboard!</a></h2>
+						<video data-autoplay data-src="img/WebsiteVideoLoop.mp4" loop muted></video>
+
+						<aside class="notes">
+							<ul>
+								<li>Video is from the game's <a href="https://www.inklestudios.com/overboard/">website</a>.</li>
+							</ul>
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Kinda-sorta RPGs?</h2>
+					</section>
+
+					<section>
+						<h2><a href="https://www.failbettergames.com/sunless/">Sunless Sea</a></h2>
+						<img data-src="img/bonny_reefs-700x393.jpg" alt="Sunless Sea sailing mode" class="r-stretch">
+
+						<aside class="notes">
+							<ul>
+								<li>Images are from the game's <a href="https://www.failbettergames.com/sunless/">website</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<h2><a href="https://www.failbettergames.com/sunless/">Sunless Sea</a></h2>
+						<img data-src="img/shopping-700x388.jpg" alt="Sunless Sea story mode" class="r-stretch">
+					</section>
+
+					<section>
+						<h2><a href="https://www.failbettergames.com/sunless-skies/">Sunless Skies</a></h2>
+						<img data-src="img/GameStartUndocking.gif" alt="Sunless Skies flight" class="r-stretch">
+
+						<aside class="notes">
+							<ul>
+								<li>Images are from the game's <a href="https://www.failbettergames.com/sunless-skies/">website</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<h2><a href="https://www.failbettergames.com/sunless-skies/">Sunless Skies</a></h2>
+						<img data-src="img/Cannibalism-1.gif" alt="Sunless Skies cannibalism" class="r-stretch">
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Archaeology?</h2>
+					</section>
+
+					<section>
+						<h2><a href="https://www.inklestudios.com/heavensvault/">Heaven's Vault</a></h2>
+						<img data-src="img/desert.jpg" alt="Heaven's Vault dialogue" class="r-stretch">
+
+						<aside class="notes">
+							<ul>
+								<li>Images are from the game's <a href="https://www.inklestudios.com/heavensvault/">website</a>.</li>
+							</ul>
+						</aside>
+					</section>
+
+					<section>
+						<h2><a href="https://www.inklestudios.com/heavensvault/">Heaven's Vault</a></h2>
+						<img data-src="img/elboreth.jpg" alt="Heaven's Vault Elboreth" class="r-stretch">
+					</section>
+
+					<section>
+						<h2><a href="https://www.inklestudios.com/heavensvault/">Heaven's Vault</a></h2>
+						<img data-src="img/arch.jpg" alt="Heaven's Vault flight" class="r-stretch">
+					</section>
+				</section>
+
+				<section>
+					<p>Commercial IF slowly died<span class="fragment">, and was reborn!</span></p>
+
+					<aside class="notes">
+						<ul>
+							<li>The InfoTaskForce and Inform <a href="https://if50.substack.com/p/1993-curses">paved the way</a> for modern IF.</li>
+							<li>People used these tools to explore what <em>text</em> games could be.</li>
+							<li>Some of them went to work on commercial projects.</li>
+							<li>For instance:
+								<ul>
+									<li>Emily Short
+										<ul>
+											<li>
+												Creative director at Failbetter Games and lead writer for
+												<a href="https://www.kickstarter.com/projects/failbetter/mask-of-the-rose-a-fallen-london-romance">Mask of the Rose</a>.
+											</li>
+											<li>
+												Wrote <em>a lot</em> of <a href="https://emshort.blog/commercial-portfolio/">IF</a>.
+											</li>
+										</ul>
+									</li>
+									<li>Jon Ingold
+										<ul>
+											<li>Narrative director at inkle.</li>
+											<li>Also wrote <a href="https://ifdb.org/search?searchfor=author%3AJon+Ingold">some IF</a>.</li>
+											<li>
+												Overboard! is
+												<a href="https://twitter.com/joningold/status/1402653657078849537">based on</a>
+												<a href="https://ifdb.org/viewgame?id=jdrbw1htq4ah8q57">Make It Good</a>.
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section>
+					<p>All this can be traced back to the days of Adventure</p>
+					<p class="fragment">When the dreams were bigger</p>
+					<p class="fragment">And the future brighter</p>
+				</section>
+
+				<!-- Part 5 -->
+
+				<section>
+					<h2>Recommended Games</h2>
+				</section>
+
+				<section>
+					<h2>Something Old</h2>
+					<ul>
+						<li>Everything Infocom
+							<ul>
+								<li><a href="https://www.old-games.ru/game/5919.html">A Mind Forever Voyaging</a></li>
+							</ul>
+						</li>
+						<li>Legend Entertainment
+							<ul>
+								<li><a href="https://www.old-games.ru/game/858.html">Eric the Unready</a></li>
+								<li>Gateway <a href="https://www.old-games.ru/game/1638.html">I</a>, <a href="https://www.old-games.ru/game/1162.html">II</a></li>
+							</ul>
+						</li>
+					</ul>
+
+					<aside class="notes">
+						For AMFV also see <a href="https://ifdb.org/viewgame?id=4h62dvooeg9ajtfa">here</a>.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Something New</h2>
+					<ul>
+						<li><a href="https://ifdb.org/viewgame?id=pp79m7ef4ekwa60r">Turandot</a> (Victor Gijsbers)</li>
+						<li><a href="https://ifdb.org/viewgame?id=aearuuxv83plclpl">Counterfeit Monkey</a> (<a href="https://emshort.blog/">Emily Short</a>)</li>
+						<li><a href="https://blue-lacuna.textories.com/">Blue Lacuna</a> (<a href="http://www.aaronareed.net/">Aaron A. Reed</a>)</li>
+						<li><a href="https://ifdb.org/viewgame?id=hsfc7fnl40k4a30q">Shade</a> (<a href="https://blog.zarfhome.com/">Andrew Plotkin</a>)</li>
+						<li><a href="https://ifdb.org/viewgame?id=ju778uv5xaswnlpl">Photopia</a> (<a href="http://adamcadre.ac/">Adam Cadre</a>)</li>
+					</ul>
+				</section>
+
+				<section>
+					<p>I could go on...</p>
+				</section>
+
+				<!-- Part 6 -->
+
+				<section>
+					<h2>Closing remarks</h2>
+				</section>
+
+				<section>
+					<h2>More Info</h2>
+					<ul>
+						<li><a href="https://ifdb.org/">The Interactive Fiction Database</a></li>
+						<li><a href="https://www.ifarchive.org/">The Interactive Fiction Archive</a></li>
+						<li><a href="http://infocom-if.org/">http://infocom-if.org/</a></li>
+						<li><a href="http://infocom.elsewhere.org/gallery/">http://infocom.elsewhere.org/gallery/</a></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Infocom Source</h2>
+					<ul>
+						<li>Jason Scott, <a href="https://github.com/historicalsource/">April 2019</a></li>
+						<li><a href="https://eblong.com/infocom/">The Obsessively Complete Infocom Catalog</a></li>
+						<li><a href="https://the-infocom-files.github.io/">The Infocom Files</a></li>
+					</ul>
+				</section>
+
+				<section>
+					<section>
+						<h2><a href="https://if50.substack.com/">50 Years of Text Games</a></h2>
+						<ul>
+							<li><a href="https://if50.substack.com/p/1986-uncle-roger">1986: Uncle Roger</a></li>
+							<li><a href="https://if50.substack.com/p/1990-lambdamoo">1990: LambdaMOO</a></li>
+							<li><a href="https://if50.substack.com/p/1992-silverwolf"><em>1992: Silverwolf</em></a></li>
+							<li><a href="https://if50.substack.com/p/1993-curses">1993: Curses</a></li>
+						</ul>
+
+						<aside class="notes">
+							<ul>
+								<li>
+									An ongoing project that tells about one text game from every year between 1971 and 2021, per week.
+									By Aaron A. Reed. It's been an enormous source of help for this talk.
+								</li>
+								<li><em>Please</em> read Silverwolf. Please.</li>
+							</ul>
+						</aside>
+					</section>
+				</section>
+
+				<section data-background-color="#000000">
+					<p style="color: white">It is pitch black. You are likely to be eaten by a grue.</p>
+				</section>
+
+				<section>
+					<h2>Questions⸮!?</h2>
+				</section>
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				navigationMode: 'linear',
+				slideNumber: 'c/t',
+				hash: true,
+				transition: 'none',
+				showNotes: window.location.search === '?print-pdf' ? 'separate-page' : false,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
